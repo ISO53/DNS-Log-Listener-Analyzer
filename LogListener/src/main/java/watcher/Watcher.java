@@ -1,3 +1,8 @@
+package watcher;
+
+import rabbitmq.Producer;
+import rabbitmq.RabbitMQConfigConstants;
+
 import java.io.*;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
@@ -8,8 +13,8 @@ public class Watcher implements Runnable {
     private final long SLEEP_TIME_MILLIS = 100;
     private final Thread thread;
     private final String path;
+    private final Producer producer;
 
-    private int CHUNK_SIZE = 10000;
     private long lastReadLine = -1;
     private boolean isRunning;
     private boolean isSleeping;
@@ -21,6 +26,7 @@ public class Watcher implements Runnable {
         this.isRunning = false;
         this.isSleeping = false;
         this.isExit = false;
+        this.producer = new Producer();
     }
 
     @Override
@@ -84,7 +90,7 @@ public class Watcher implements Runnable {
             BufferedReader reader = new BufferedReader(new FileReader(path));
             String line;
             int linesRead = 0;
-            ArrayList<LogEntry> logEntries = new ArrayList<>(CHUNK_SIZE);
+            ArrayList<String> logEntries = new ArrayList<>(RabbitMQConfigConstants.CHUNK_SIZE);
 
             while ((line = reader.readLine()) != null) {
 
@@ -96,13 +102,14 @@ public class Watcher implements Runnable {
 
                 linesRead++;
                 lastReadLine++;
-                logEntries.add(new LogEntry(line.split(" ")));
+                logEntries.add(line);
 
-                if (linesRead >= CHUNK_SIZE) {
+                if (linesRead >= RabbitMQConfigConstants.CHUNK_SIZE) {
                     // We read a chunk of string, time to use it
                     linesRead = 0;
 
-                    DirectoryWatcher.QUEUE.addAll(logEntries);
+                    producer.sendChunk(logEntries);
+
                     logEntries.clear();
                 }
             }
@@ -119,9 +126,5 @@ public class Watcher implements Runnable {
                 }
             }
         }
-    }
-
-    private void loadChunkSizeFromDB() {
-        // Change the chunk size variable from the value got from DB
     }
 }

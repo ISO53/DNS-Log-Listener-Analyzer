@@ -1,12 +1,12 @@
+package watcher;
+
 import java.nio.file.*;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class DirectoryWatcher implements Runnable {
 
-    protected final static ConcurrentLinkedQueue<LogEntry> QUEUE = new ConcurrentLinkedQueue<>();
-
-    // String:fileName, Watcher:watcher (each watcher watches one log file)
+    // String:fileName, watcher.Watcher:watcher (each watcher watches one log file)
     private final HashMap<String, Watcher> watchers = new HashMap<>();
     private final Path dir;
     private final Thread thread;
@@ -37,7 +37,7 @@ public class DirectoryWatcher implements Runnable {
                 try {
                     key = watchService.take(); // Blocking
                 } catch (InterruptedException e) {
-                    System.out.println("DirectoryWatcher has been interrupted. Cleaning up and exiting this thread. " + this.thread.toString());
+                    System.out.println("watcher.DirectoryWatcher has been interrupted. Cleaning up and exiting this thread. " + this.thread.toString());
                     watchService.close();
                     break;
                 }

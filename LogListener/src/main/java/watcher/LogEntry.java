@@ -1,3 +1,5 @@
+package watcher;
+
 public class LogEntry {
 
     private String date;                    // 11/17/2021

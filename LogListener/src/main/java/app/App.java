@@ -1,3 +1,7 @@
+package app;
+
+import watcher.DirectoryWatcher;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -14,7 +18,7 @@ public class App {
 
     public static void main(String[] args) {
 
-        //Path directory = Paths.get("C:\\Users\\termi\\Desktop\\Log Files");
+        // Path directory = Paths.get("C:\\Users\\termi\\Desktop\\Log Files");
 
         writeAsciiArt();
 
