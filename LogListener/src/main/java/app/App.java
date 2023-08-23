@@ -18,7 +18,7 @@ public class App {
 
     public static void main(String[] args) {
 
-        // Path directory = Paths.get("C:\\Users\\termi\\Desktop\\Log Files");
+        // C:\Users\termi\Desktop\Log Files
 
         writeAsciiArt();
 
@@ -46,6 +46,9 @@ public class App {
         System.out.println("Good bye.");
     }
 
+    /**
+     * Handles the inputs entered by the user
+     * */
     public static int choiceHandler(int choice) {
 
         switch (choice) {
@@ -74,6 +77,9 @@ public class App {
         return CARRY_ON;
     }
 
+    /**
+     * Writes some ascii art to look cool
+     * */
     public static void writeAsciiArt() {
         String s = File.separator;
         String filePath = System.getProperty("user.dir") + String.format("%ssrc%smain%sresources%sascii_art.txt", s, s, s, s);

@@ -2,7 +2,6 @@ package watcher;
 
 import java.nio.file.*;
 import java.util.HashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class DirectoryWatcher implements Runnable {
 
