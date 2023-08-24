@@ -2,10 +2,7 @@ package app;
 
 import watcher.DirectoryWatcher;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.*;
 import java.util.LinkedList;
 import java.util.Scanner;
@@ -18,6 +15,7 @@ public class App {
 
     /**
      * Main method
+     *
      * @param args command line arguments
      */
     public static void main(String[] args) {
@@ -52,6 +50,7 @@ public class App {
 
     /**
      * Handles the inputs entered by the user
+     *
      * @param choice a number entered by the user to choose between menu options
      * @return status
      */
@@ -77,8 +76,7 @@ public class App {
      * Reads the directory paths from the dirst.txt file and starts listening those directories
      */
     public static void startListeningLogFiles() {
-        String s = File.separator;
-        String dir = System.getProperty("user.dir") + s + "src" + s + "main" + s + "resources" + s + "dirs.txt";
+        String dir = getConfigurationPath();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(dir))) {
             String line;
@@ -92,6 +90,7 @@ public class App {
 
     /**
      * Starts listening a directory and all the log files in it for changes
+     *
      * @param directory a file directory to listen
      */
     public static void listenDirectory(String directory) {
@@ -105,17 +104,44 @@ public class App {
         DirectoryWatcher directoryWatcher = new DirectoryWatcher(dir);
         directoryWatcher.start();
         DIRECTORY_WATCHERS.add(directoryWatcher);
+        addDirIfNotExists(directory);
         System.out.printf("Directory '%s' is now being listened.\n", directory);
     }
 
     /**
-     * Writes some ascii art to look cool
-     * */
-    public static void writeAsciiArt() {
-        String s = File.separator;
-        String filePath = System.getProperty("user.dir") + String.format("%ssrc%smain%sresources%sascii_art.txt", s, s, s, s);
+     * Adds the new directory to the configuration file if it does not exist
+     *
+     * @param directory directory to add
+     */
+    public static void addDirIfNotExists(String directory) {
+        boolean isExist = false;
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(getConfigurationPath()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.equals(directory)) {
+                    isExist = true;
+                    break;
+                }
+            }
+
+            if (isExist) {
+                return;
+            }
+
+            BufferedWriter writer = new BufferedWriter(new FileWriter(getConfigurationPath()));
+            writer.write(directory);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * Writes some ascii art to look cool
+     */
+    public static void writeAsciiArt() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(getConfigurationPath()))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 System.out.println(line);
@@ -123,5 +149,15 @@ public class App {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Returns the path of the config file for the program
+     *
+     * @return path of the config.txt file
+     */
+    public static String getConfigurationPath() {
+        String s = File.separator;
+        return System.getProperty("user.dir") + String.format("%ssrc%smain%sresources%sascii_art.txt", s, s, s, s);
     }
 }
