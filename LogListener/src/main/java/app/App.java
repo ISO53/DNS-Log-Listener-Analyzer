@@ -1,5 +1,6 @@
 package app;
 
+import rabbitmq.Consumer;
 import watcher.DirectoryWatcher;
 
 import java.io.*;
@@ -11,6 +12,7 @@ public class App {
 
     private static final int EXIT = 0;
     private static final int CARRY_ON = 1;
+    private static final int THREAD_POOL_SIZE = 1000;
     private static final LinkedList<DirectoryWatcher> DIRECTORY_WATCHERS = new LinkedList<>();
 
     /**
@@ -85,6 +87,18 @@ public class App {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * Creates a thread pool full of workers (Consumer). These workers listen the rabbitmq queue and when there is a
+     * data in the queue they take the data, enrich it sent it to the elastic search.
+     */
+    public static void startListeningQueue() {
+        for (int i = 0; i < THREAD_POOL_SIZE; i++) {
+            Consumer consumer = new Consumer();
+            consumer.startReading();
         }
     }
 

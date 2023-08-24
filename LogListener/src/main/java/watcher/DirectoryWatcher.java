@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 public class DirectoryWatcher implements Runnable {
 
-    // String:fileName, watcher.Watcher:watcher (each watcher watches one log file)
+    // String:fileName, Watcher:watcher (each watcher watches one log file)
     private final HashMap<String, Watcher> watchers = new HashMap<>();
     private final Path dir;
     private final Thread thread;

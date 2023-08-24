@@ -37,4 +37,132 @@ public class LogEntry {
         this.questionType = informations[15];
         this.questionName = informations[16];
     }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public void setThreadId(String threadId) {
+        this.threadId = threadId;
+    }
+
+    public void setContext(String context) {
+        this.context = context;
+    }
+
+    public void setInternalPacketId(String internalPacketId) {
+        this.internalPacketId = internalPacketId;
+    }
+
+    public void setUdpTcpIndicator(String udpTcpIndicator) {
+        this.udpTcpIndicator = udpTcpIndicator;
+    }
+
+    public void setSendReceiveIndicator(String sendReceiveIndicator) {
+        this.sendReceiveIndicator = sendReceiveIndicator;
+    }
+
+    public void setRemoteIp(String remoteIp) {
+        this.remoteIp = remoteIp;
+    }
+
+    public void setXidHex(String xidHex) {
+        this.xidHex = xidHex;
+    }
+
+    public void setQueryResponse(String queryResponse) {
+        this.queryResponse = queryResponse;
+    }
+
+    public void setOpcode(String opcode) {
+        this.opcode = opcode;
+    }
+
+    public void setFlagsHex(String flagsHex) {
+        this.flagsHex = flagsHex;
+    }
+
+    public void setFlagsChar(String flagsChar) {
+        this.flagsChar = flagsChar;
+    }
+
+    public void setResponseCode(String responseCode) {
+        this.responseCode = responseCode;
+    }
+
+    public void setQuestionType(String questionType) {
+        this.questionType = questionType;
+    }
+
+    public void setQuestionName(String questionName) {
+        this.questionName = questionName;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public String getThreadId() {
+        return threadId;
+    }
+
+    public String getContext() {
+        return context;
+    }
+
+    public String getInternalPacketId() {
+        return internalPacketId;
+    }
+
+    public String getUdpTcpIndicator() {
+        return udpTcpIndicator;
+    }
+
+    public String getSendReceiveIndicator() {
+        return sendReceiveIndicator;
+    }
+
+    public String getRemoteIp() {
+        return remoteIp;
+    }
+
+    public String getXidHex() {
+        return xidHex;
+    }
+
+    public String getQueryResponse() {
+        return queryResponse;
+    }
+
+    public String getOpcode() {
+        return opcode;
+    }
+
+    public String getFlagsHex() {
+        return flagsHex;
+    }
+
+    public String getFlagsChar() {
+        return flagsChar;
+    }
+
+    public String getResponseCode() {
+        return responseCode;
+    }
+
+    public String getQuestionType() {
+        return questionType;
+    }
+
+    public String getQuestionName() {
+        return questionName;
+    }
 }
