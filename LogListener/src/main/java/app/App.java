@@ -12,7 +12,7 @@ public class App {
 
     private static final int EXIT = 0;
     private static final int CARRY_ON = 1;
-    private static final int THREAD_POOL_SIZE = 1000;
+    private static final int THREAD_POOL_SIZE = 5;
     private static final LinkedList<DirectoryWatcher> DIRECTORY_WATCHERS = new LinkedList<>();
 
     /**
@@ -87,7 +87,7 @@ public class App {
      * Reads the directory paths from the dirst.txt file and starts listening those directories
      */
     public static void startListeningLogFiles() {
-        String dir = getConfigurationPath();
+        String dir = getResourcesPath() + File.separator + "config.txt";
 
         try (BufferedReader reader = new BufferedReader(new FileReader(dir))) {
             String line;
@@ -138,8 +138,9 @@ public class App {
      */
     public static void addDirIfNotExists(String directory) {
         boolean isExist = false;
+        String filePath = getResourcesPath() + File.separator + "config.txt";
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(getConfigurationPath()))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.equals(directory)) {
@@ -152,7 +153,7 @@ public class App {
                 return;
             }
 
-            BufferedWriter writer = new BufferedWriter(new FileWriter(getConfigurationPath()));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
             writer.write(directory);
         } catch (IOException e) {
             e.printStackTrace();
@@ -164,7 +165,9 @@ public class App {
      * Writes some ascii art to look cool
      */
     public static void writeAsciiArt() {
-        try (BufferedReader reader = new BufferedReader(new FileReader(getConfigurationPath()))) {
+        String filePath = getResourcesPath() + File.separator + "ascii_art.txt";
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 System.out.println(line);
@@ -179,8 +182,8 @@ public class App {
      *
      * @return path of the config.txt file
      */
-    public static String getConfigurationPath() {
+    public static String getResourcesPath() {
         String s = File.separator;
-        return System.getProperty("user.dir") + String.format("%ssrc%smain%sresources%sascii_art.txt", s, s, s, s);
+        return System.getProperty("user.dir") + String.format("%ssrc%smain%sresources%s", s, s, s, s);
     }
 }

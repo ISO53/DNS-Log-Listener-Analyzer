@@ -19,7 +19,7 @@ public class Producer {
         try {
             Connection connection = factory.newConnection();
             channel = connection.createChannel();
-            channel.queueDeclare(RabbitMQConfigConstants.QUEUE_NAME, false, false, false, null);
+            channel.queueDeclare(RabbitMQConfigConstants.QUEUE_NAME, true, false, false, null);
         } catch (IOException | TimeoutException e) {
             e.printStackTrace();
         }
