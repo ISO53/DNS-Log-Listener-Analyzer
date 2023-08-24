@@ -26,8 +26,17 @@ public class App {
 
         startListeningLogFiles();
 
-        Scanner scanner = new Scanner(System.in);
+        startListeningQueue();
 
+        mainMenu();
+
+    }
+
+    /**
+     * Main menu that gives the user control over the program
+     */
+    public static void mainMenu() {
+        Scanner scanner = new Scanner(System.in);
         int choice;
         int status;
         do {

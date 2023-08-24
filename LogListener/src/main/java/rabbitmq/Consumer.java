@@ -31,8 +31,8 @@ public class Consumer {
 
             DeliverCallback deliverCallback = (s, delivery) -> {
                 String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
-                // Enrich the data
 
+                // Enrich the data
                 LogEntry logEntry = new LogEntry(message.split(" "));
 
                 NetworkInfo networkInfo = new NetworkInfo(logEntry.getRemoteIp());
