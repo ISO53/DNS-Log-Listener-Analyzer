@@ -95,7 +95,7 @@ public class Watcher implements Runnable {
             while ((line = reader.readLine()) != null) {
 
                 // Go to the last read line
-                if (linesRead != lastReadLine) {
+                if (lastReadLine != -1 && linesRead != lastReadLine) {
                     linesRead++;
                     continue;
                 }
@@ -112,6 +112,11 @@ public class Watcher implements Runnable {
 
                     logEntries.clear();
                 }
+            }
+
+            if (!logEntries.isEmpty()) {
+                producer.sendChunk(logEntries);
+                logEntries.clear();
             }
 
             lock.release();

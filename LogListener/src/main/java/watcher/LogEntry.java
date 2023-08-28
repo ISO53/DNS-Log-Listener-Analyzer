@@ -1,5 +1,8 @@
 package watcher;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class LogEntry {
 
     private String date;                    // 11/17/2021
@@ -19,6 +22,9 @@ public class LogEntry {
     private String questionType;            // (8)woshub(2)com(0)
     private String questionName;            // woshub.com
 
+    // 11/17/2021 6:00:00 AM 0D0C PACKET 00000272D98DD0B0 UDP Rcv 192.168.13.130 0002 Q [0001 D NOERROR] A (8)woshub(2)com(0)
+    // 08/24/2023 03:38:12 PM 000C21F0 PACKET 192.168.87.125 UDP Rcv 192.168.87.125 0002 Q [0001 D NOERROR] CNAME (15)ixutlvqgwnhzarq(0)
+
     public LogEntry(String[] informations) {
         this.date = informations[0];
         this.time = informations[1] + " " + informations[2];
@@ -35,7 +41,23 @@ public class LogEntry {
         this.flagsChar = informations[13];
         this.responseCode = informations[14];
         this.questionType = informations[15];
-        this.questionName = informations[16];
+        this.questionName = parseDNS(informations[15]);
+    }
+
+    public String parseDNS(String dns) {
+        Pattern pattern = Pattern.compile("\\((\\d+)\\)([^\\(\\)]+)");
+        Matcher matcher = pattern.matcher(dns);
+        StringBuilder result = new StringBuilder();
+
+        while (matcher.find()) {
+            result.append(matcher.group(2));
+
+            if (matcher.find()) {
+                result.append(".");
+            }
+        }
+
+        return result.toString();
     }
 
     public void setDate(String date) {

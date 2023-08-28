@@ -1,0 +1,8 @@
+app\App.class
+rabbitmq\Producer.class
+watcher\DirectoryWatcher.class
+watcher\Watcher.class
+utils\NetworkInfo.class
+rabbitmq\RabbitMQConfigConstants.class
+watcher\LogEntry.class
+rabbitmq\Consumer.class

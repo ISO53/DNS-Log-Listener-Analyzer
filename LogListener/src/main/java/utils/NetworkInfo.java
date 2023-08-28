@@ -14,13 +14,12 @@ public class NetworkInfo {
 
     public NetworkInfo(String ip) {
         this.ip = ip;
+        this.hostname = findHostname();
+        this.localIp = findLocalIp();
+        this.macAddress = findMacAddress();
     }
 
-    public String getIp() {
-        return this.ip;
-    }
-
-    public String getHostname() {
+    public String findHostname() {
         try {
             return InetAddress.getByName(this.ip).getHostName();
         } catch (UnknownHostException e) {
@@ -30,7 +29,7 @@ public class NetworkInfo {
         return null;
     }
 
-    public String getLocalIp() {
+    public String findLocalIp() {
         try {
             return InetAddress.getByName(ip).getHostAddress();
         } catch (UnknownHostException e) {
@@ -40,7 +39,7 @@ public class NetworkInfo {
         return null;
     }
 
-    public String getMacAddress() {
+    public String findMacAddress() {
         try {
             // MAC address (requires elevated privileges)
             try {
@@ -57,13 +56,28 @@ public class NetworkInfo {
                     System.out.println("MAC Address: Not available (requires elevated privileges)");
                 }
             } catch (SocketException e) {
-                e.printStackTrace();
                 System.out.println("SocketException - MAC Address: Not available (requires elevated privileges)");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Exception - MAC Address: Not available (requires elevated privileges)");
         }
 
         return null;
+    }
+
+    public String getIp() {
+        return this.ip;
+    }
+
+    public String getHostname() {
+        return hostname;
+    }
+
+    public String getLocalIp() {
+        return localIp;
+    }
+
+    public String getMacAddress() {
+        return macAddress;
     }
 }

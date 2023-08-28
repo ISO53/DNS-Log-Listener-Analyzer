@@ -36,7 +36,7 @@ public class DirectoryWatcher implements Runnable {
                 try {
                     key = watchService.take(); // Blocking
                 } catch (InterruptedException e) {
-                    System.out.println("watcher.DirectoryWatcher has been interrupted. Cleaning up and exiting this thread. " + this.thread.toString());
+                    System.out.println("DirectoryWatcher has been interrupted. Cleaning up and exiting this thread. " + this.thread.toString());
                     watchService.close();
                     break;
                 }

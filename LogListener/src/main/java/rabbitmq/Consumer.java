@@ -11,7 +11,7 @@ import java.nio.charset.StandardCharsets;
 
 public class Consumer {
 
-    private Channel chanel;
+    private Channel channel;
 
     public Consumer() {
         ConnectionFactory factory = new ConnectionFactory();
@@ -19,7 +19,8 @@ public class Consumer {
 
         try {
             Connection connection = factory.newConnection();
-            chanel = connection.createChannel();
+            channel = connection.createChannel();
+            channel.queueDeclare(RabbitMQConfigConstants.QUEUE_NAME, true, false, false, null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -27,23 +28,22 @@ public class Consumer {
 
     public void startReading() {
         try {
-            chanel.queueDeclare(RabbitMQConfigConstants.QUEUE_NAME, true, false, false, null);
-
             DeliverCallback deliverCallback = (s, delivery) -> {
                 String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
-
                 // Enrich the data
                 LogEntry logEntry = new LogEntry(message.split(" "));
 
                 NetworkInfo networkInfo = new NetworkInfo(logEntry.getRemoteIp());
 
-                System.out.println(networkInfo.getHostname());
-                System.out.println(networkInfo.getLocalIp());
-                System.out.println(networkInfo.getMacAddress());
+                System.out.println("*******************" + logEntry.getQuestionName() + "*******************");
+                System.out.print("\tHostname: " + networkInfo.getHostname());
+                System.out.print("\tLocal Ip: " + networkInfo.getLocalIp());
+                System.out.print("\tMac Address: " + networkInfo.getMacAddress() + "\n");
             };
 
-            chanel.basicConsume(RabbitMQConfigConstants.QUEUE_NAME, true, deliverCallback, consumerTag -> {
+            channel.basicConsume(RabbitMQConfigConstants.QUEUE_NAME, true, deliverCallback, consumerTag -> {
             });
+
         } catch (Exception e) {
             e.printStackTrace();
         }
