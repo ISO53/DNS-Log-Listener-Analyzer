@@ -1,11 +1,18 @@
 package utils;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 public class NetworkInfo {
+
+    private static final Logger LOGGER = LogManager.getLogManager().getLogger("NetworkInfoLogger");
 
     String ip;
     String hostname;
@@ -19,27 +26,31 @@ public class NetworkInfo {
         this.macAddress = findMacAddress();
     }
 
-    public String findHostname() {
+    public NetworkInfo() {
+        super();
+    }
+
+    private @Nullable String findHostname() {
         try {
             return InetAddress.getByName(this.ip).getHostName();
         } catch (UnknownHostException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, e.getMessage());
         }
 
         return null;
     }
 
-    public String findLocalIp() {
+    private @Nullable String findLocalIp() {
         try {
             return InetAddress.getByName(ip).getHostAddress();
         } catch (UnknownHostException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, e.getMessage());
         }
 
         return null;
     }
 
-    public String findMacAddress() {
+    private @Nullable String findMacAddress() {
         try {
             // MAC address (requires elevated privileges)
             try {
@@ -53,13 +64,13 @@ public class NetworkInfo {
                     macAddress.setLength(macAddress.length() - 1); // Remove the trailing colon
                     return macAddress.toString();
                 } else {
-                    System.out.println("MAC Address: Not available (requires elevated privileges)");
+                    LOGGER.log(Level.WARNING, "MAC Address: Not available (requires elevated privileges)");
                 }
             } catch (SocketException e) {
-                System.out.println("SocketException - MAC Address: Not available (requires elevated privileges)");
+                LOGGER.log(Level.WARNING, "SocketException - MAC Address: Not available (requires elevated privileges)");
             }
         } catch (Exception e) {
-            System.out.println("Exception - MAC Address: Not available (requires elevated privileges)");
+            LOGGER.log(Level.WARNING, "Exception - MAC Address: Not available (requires elevated privileges)");
         }
 
         return null;

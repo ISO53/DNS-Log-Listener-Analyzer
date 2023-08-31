@@ -21,6 +21,9 @@ public class LogEntry {
     private String responseCode;            // A
     private String questionType;            // (8)woshub(2)com(0)
     private String questionName;            // woshub.com
+    private String localIp;
+    private String hostAddress;
+    private String macAddress;
 
     // 11/17/2021 6:00:00 AM 0D0C PACKET 00000272D98DD0B0 UDP Rcv 192.168.13.130 0002 Q [0001 D NOERROR] A (8)woshub(2)com(0)
     // 08/24/2023 03:38:12 PM 000C21F0 PACKET 192.168.87.125 UDP Rcv 192.168.87.125 0002 Q [0001 D NOERROR] CNAME (15)ixutlvqgwnhzarq(0)
@@ -42,6 +45,9 @@ public class LogEntry {
         this.responseCode = informations[14];
         this.questionType = informations[15];
         this.questionName = parseDNS(informations[15]);
+        this.localIp = null;
+        this.hostAddress = null;
+        this.macAddress = null;
     }
 
     public String parseDNS(String dns) {
@@ -124,6 +130,18 @@ public class LogEntry {
         this.questionName = questionName;
     }
 
+    public void setLocalIp(String localIp) {
+        this.localIp = localIp;
+    }
+
+    public void setHostAddress(String hostAddress) {
+        this.hostAddress = hostAddress;
+    }
+
+    public void setMacAddress(String macAddress) {
+        this.macAddress = macAddress;
+    }
+
     public String getDate() {
         return date;
     }
@@ -186,5 +204,17 @@ public class LogEntry {
 
     public String getQuestionName() {
         return questionName;
+    }
+
+    public String getLocalIp() {
+        return localIp;
+    }
+
+    public String getHostAddress() {
+        return hostAddress;
+    }
+
+    public String getMacAddress() {
+        return macAddress;
     }
 }
