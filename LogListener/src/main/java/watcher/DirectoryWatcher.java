@@ -2,8 +2,13 @@ package watcher;
 
 import java.nio.file.*;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 public class DirectoryWatcher implements Runnable {
+
+    private static final Logger LOGGER = LogManager.getLogManager().getLogger(DirectoryWatcher.class.getName());
 
     // String:fileName, Watcher:watcher (each watcher watches one log file)
     private final HashMap<String, Watcher> watchers = new HashMap<>();
@@ -12,12 +17,23 @@ public class DirectoryWatcher implements Runnable {
 
     private boolean isRunning;
 
+    /**
+     * Initializes a DirectoryWatcher instance for monitoring a specified directory. It sets the directory path and
+     * initializes the internal data structures. The watcher is initially not running.
+     *
+     * @param dir The Path object representing the directory to be monitored.
+     */
     public DirectoryWatcher(Path dir) {
         this.dir = dir;
         this.isRunning = false;
         this.thread = new Thread(this);
     }
 
+    /**
+     * The run method is executed when the DirectoryWatcher is started as a separate thread. It continuously monitors
+     * the specified directory for changes in log files and creates or wakes up Watcher instances for individual log
+     * files.
+     */
     @Override
     public void run() {
 
@@ -75,15 +91,23 @@ public class DirectoryWatcher implements Runnable {
                 key.reset();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "An error occurred trying to monitor a directory:", e);
         }
     }
 
+    /**
+     * Starts the DirectoryWatcher. It sets the watcher to a running state and initiates the thread to begin monitoring
+     * the directory for log file changes.
+     */
     public void start() {
         isRunning = true;
         thread.start();
     }
 
+    /**
+     * Stops the DirectoryWatcher. It sets the watcher to a non-running state and interrupts the thread, allowing it to
+     * gracefully exit. Any ongoing monitoring is terminated.
+     */
     public void stop() {
         isRunning = false;
         thread.interrupt();

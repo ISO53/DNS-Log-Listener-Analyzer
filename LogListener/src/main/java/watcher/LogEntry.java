@@ -1,26 +1,28 @@
 package watcher;
 
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LogEntry {
 
-    private String date;                    // 11/17/2021
-    private String time;                    // 6:00:00 AM
-    private String threadId;                // 0D0C
-    private String context;                 // PACKET
-    private String internalPacketId;        // 00000272D98DD0B0
-    private String udpTcpIndicator;         // UDP
-    private String sendReceiveIndicator;    // Rcv
-    private String remoteIp;                // 192.168.13.130
-    private String xidHex;                  // 0002
-    private String queryResponse;           // Q
-    private String opcode;                  // 0001
-    private String flagsHex;                // D
-    private String flagsChar;               // NOERROR
-    private String responseCode;            // A
-    private String questionType;            // (8)woshub(2)com(0)
-    private String questionName;            // woshub.com
+    private final UUID id;
+    private final String date;                    // 11/17/2021
+    private final String time;                    // 6:00:00 AM
+    private final String threadId;                // 0D0C
+    private final String context;                 // PACKET
+    private final String internalPacketId;        // 00000272D98DD0B0
+    private final String udpTcpIndicator;         // UDP
+    private final String sendReceiveIndicator;    // Rcv
+    private final String remoteIp;                // 192.168.13.130
+    private final String xidHex;                  // 0002
+    private final String queryResponse;           // Q
+    private final String opcode;                  // 0001
+    private final String flagsHex;                // D
+    private final String flagsChar;               // NOERROR
+    private final String responseCode;            // A
+    private final String questionType;            // (8)woshub(2)com(0)
+    private final String questionName;            // woshub.com
     private String localIp;
     private String hostAddress;
     private String macAddress;
@@ -29,6 +31,7 @@ public class LogEntry {
     // 08/24/2023 03:38:12 PM 000C21F0 PACKET 192.168.87.125 UDP Rcv 192.168.87.125 0002 Q [0001 D NOERROR] CNAME (15)ixutlvqgwnhzarq(0)
 
     public LogEntry(String[] informations) {
+        this.id = UUID.randomUUID();
         this.date = informations[0];
         this.time = informations[1] + " " + informations[2];
         this.threadId = informations[3];
@@ -66,70 +69,6 @@ public class LogEntry {
         return result.toString();
     }
 
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
-    public void setThreadId(String threadId) {
-        this.threadId = threadId;
-    }
-
-    public void setContext(String context) {
-        this.context = context;
-    }
-
-    public void setInternalPacketId(String internalPacketId) {
-        this.internalPacketId = internalPacketId;
-    }
-
-    public void setUdpTcpIndicator(String udpTcpIndicator) {
-        this.udpTcpIndicator = udpTcpIndicator;
-    }
-
-    public void setSendReceiveIndicator(String sendReceiveIndicator) {
-        this.sendReceiveIndicator = sendReceiveIndicator;
-    }
-
-    public void setRemoteIp(String remoteIp) {
-        this.remoteIp = remoteIp;
-    }
-
-    public void setXidHex(String xidHex) {
-        this.xidHex = xidHex;
-    }
-
-    public void setQueryResponse(String queryResponse) {
-        this.queryResponse = queryResponse;
-    }
-
-    public void setOpcode(String opcode) {
-        this.opcode = opcode;
-    }
-
-    public void setFlagsHex(String flagsHex) {
-        this.flagsHex = flagsHex;
-    }
-
-    public void setFlagsChar(String flagsChar) {
-        this.flagsChar = flagsChar;
-    }
-
-    public void setResponseCode(String responseCode) {
-        this.responseCode = responseCode;
-    }
-
-    public void setQuestionType(String questionType) {
-        this.questionType = questionType;
-    }
-
-    public void setQuestionName(String questionName) {
-        this.questionName = questionName;
-    }
-
     public void setLocalIp(String localIp) {
         this.localIp = localIp;
     }
@@ -140,6 +79,10 @@ public class LogEntry {
 
     public void setMacAddress(String macAddress) {
         this.macAddress = macAddress;
+    }
+
+    public UUID getId() {
+        return id;
     }
 
     public String getDate() {

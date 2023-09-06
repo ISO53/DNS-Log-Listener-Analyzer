@@ -7,13 +7,19 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.LinkedList;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 public class App {
+
+    private static final Logger LOGGER = LogManager.getLogManager().getLogger(App.class.getName());
 
     private static final int EXIT = 0;
     private static final int CARRY_ON = 1;
     private static final int THREAD_POOL_SIZE = 5;
     private static final LinkedList<DirectoryWatcher> DIRECTORY_WATCHERS = new LinkedList<>();
+    private static final LinkedList<Consumer> CONSUMERS = new LinkedList<>();
 
     /**
      * Main method
@@ -39,6 +45,7 @@ public class App {
         Scanner scanner = new Scanner(System.in);
         int choice;
         int status;
+
         do {
             System.out.println("0. Listen new directory");
             System.out.println("1. Show listened directories");
@@ -51,12 +58,7 @@ public class App {
 
         System.out.println("Exiting from program...");
 
-        for (DirectoryWatcher directoryWatcher : DIRECTORY_WATCHERS) {
-            directoryWatcher.getWatchers().forEach((s, watcher) -> watcher.stop());
-            directoryWatcher.stop();
-        }
-
-        System.out.println("Good bye.");
+        exit();
     }
 
     /**
@@ -84,7 +86,7 @@ public class App {
     }
 
     /**
-     * Reads the directory paths from the dirst.txt file and starts listening those directories
+     * Reads the directory paths from the config.txt file and starts listening those directories
      */
     public static void startListeningLogFiles() {
         String dir = getResourcesPath() + File.separator + "config.txt";
@@ -95,7 +97,7 @@ public class App {
                 listenDirectory(line);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "An error occurred trying to read file:", e);
         }
     }
 
@@ -107,6 +109,7 @@ public class App {
     public static void startListeningQueue() {
         for (int i = 0; i < THREAD_POOL_SIZE; i++) {
             Consumer consumer = new Consumer();
+            CONSUMERS.add(consumer);
             consumer.startReading();
         }
     }
@@ -156,7 +159,7 @@ public class App {
             BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
             writer.write(directory);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "An error occurred trying to read/write file:", e);
         }
 
     }
@@ -173,7 +176,7 @@ public class App {
                 System.out.println(line);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "An error occurred trying to read file:", e);
         }
         System.out.println("");
     }
@@ -186,5 +189,18 @@ public class App {
     public static String getResourcesPath() {
         String s = File.separator;
         return System.getProperty("user.dir") + String.format("%ssrc%smain%sresources%s", s, s, s, s);
+    }
+
+    /**
+     * Gracefully exits the application, stopping all directory watchers and consumers, and releasing associated
+     * resources.
+     */
+    public static void exit() {
+        for (DirectoryWatcher directoryWatcher : DIRECTORY_WATCHERS) {
+            directoryWatcher.getWatchers().forEach((s, watcher) -> watcher.stop());
+            directoryWatcher.stop();
+        }
+
+        CONSUMERS.forEach(Consumer::close);
     }
 }

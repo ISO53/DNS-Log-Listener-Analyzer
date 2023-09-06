@@ -7,8 +7,13 @@ import java.io.*;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 public class Watcher implements Runnable {
+
+    private static final Logger LOGGER = LogManager.getLogManager().getLogger(Watcher.class.getName());
 
     private final long SLEEP_TIME_MILLIS = 100;
     private final Thread thread;
@@ -20,6 +25,11 @@ public class Watcher implements Runnable {
     private boolean isSleeping;
     private boolean isExit;
 
+    /**
+     * Initializes a Watcher instance for monitoring changes in a specified log file. It sets the file path, creates a
+     * thread for watching, and initializes other internal variables and a Producer for sending log data to RabbitMQ.
+     * @param path A String representing the path to the log file to be monitored.
+     */
     public Watcher(String path) {
         this.path = path;
         this.thread = new Thread(this);
@@ -29,6 +39,11 @@ public class Watcher implements Runnable {
         this.producer = new Producer();
     }
 
+    /**
+     * The run method is executed when the Watcher is started as a separate thread. It continuously monitors the
+     * specified log file for changes, reads and stores log entries, and sends them to RabbitMQ via the associated
+     * Producer. The thread can be controlled using flags like isRunning, isSleeping, and isExit.
+     */
     @Override
     public void run() {
 
@@ -54,28 +69,49 @@ public class Watcher implements Runnable {
         System.out.println("Watcher has been interrupted. Cleaning up and exiting this thread. " + this.thread.toString());
     }
 
+    /**
+     * Starts the Watcher thread for monitoring the log file. It sets the isRunning flag to true and initiates the
+     * thread to begin monitoring and processing log entries.
+     */
     public void start() {
         isRunning = true;
         thread.start();
     }
 
+    /**
+     * Stops the Watcher. It sets the isSleeping flag to false and the isExit flag to true, indicating that the thread
+     * should terminate gracefully.
+     */
     public void stop() {
         isSleeping = false;
         isExit = true;
     }
 
+    /**
+     * Wakes up the Watcher from a sleeping state, allowing it to continue monitoring the log file for changes. It sets
+     * the isSleeping flag to false.
+     */
     public void wakeUp() {
         isSleeping = false;
     }
 
+    /**
+     * Puts the Watcher thread to sleep for a defined duration (SLEEP_TIME_MILLIS) when there are no changes in the log
+     * file. It is used to reduce CPU usage during idle periods.
+     */
     private void sleep() {
         try {
             Thread.sleep(SLEEP_TIME_MILLIS);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "An error occurred trying to sleep the thread:", e);
         }
     }
 
+    /**
+     * Reads log entries from the monitored log file, stores them in a collection, and sends them to RabbitMQ in chunks.
+     * It uses file locking to ensure exclusive access to the log file while reading. This method manages the reading,
+     * processing, and sending of log entries.
+     */
     private void readAndStore() {
         FileLock lock = null;
 
@@ -121,13 +157,13 @@ public class Watcher implements Runnable {
 
             lock.release();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "An error occurred trying to read file:", e);
         } finally {
             if (lock != null) {
                 try {
                     lock.release();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    LOGGER.log(Level.SEVERE, "An error occurred trying to release file lock:", e);
                 }
             }
         }
