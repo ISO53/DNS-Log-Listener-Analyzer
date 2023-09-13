@@ -11,9 +11,7 @@ import utils.GlobalLogger;
 import watcher.LogEntry;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.Level;
 
 public class ElasticClient {
 
@@ -54,7 +52,7 @@ public class ElasticClient {
                     .id(logEntry.getId().toString())
                     .document(logEntry));
         } catch (IOException e) {
-            GlobalLogger.GLOBAL_LOGGER.log(Level.SEVERE, "An error occurred trying to index entry to ElasticSearch:", e);
+            GlobalLogger.getLoggerInstance().log(Level.FATAL, "An error occurred trying to index entry to ElasticSearch:", e);
         }
 
         return null;
@@ -75,7 +73,7 @@ public class ElasticClient {
                 restClient.close();
             }
         } catch (IOException e) {
-            GlobalLogger.GLOBAL_LOGGER.log(Level.SEVERE, "An error occurred trying to close ElasticSearch channels:", e);
+            GlobalLogger.getLoggerInstance().log(Level.FATAL, "An error occurred trying to close ElasticSearch channels:", e);
         }
     }
 }

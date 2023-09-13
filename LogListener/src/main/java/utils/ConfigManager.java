@@ -3,7 +3,7 @@ package utils;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.logging.Level;
+import org.apache.logging.log4j.Level;
 
 public class ConfigManager {
 
@@ -36,7 +36,7 @@ public class ConfigManager {
                 return;
             }
         } catch (IOException e) {
-            GlobalLogger.GLOBAL_LOGGER.log(Level.SEVERE, "An error occurred trying to read/write file:", e);
+            GlobalLogger.getLoggerInstance().log(Level.FATAL, "An error occurred trying to read/write file:", e);
         }
 
         // Directory not exists. Let's add to the ArrayList then write the ArrayList to the file.
@@ -54,7 +54,7 @@ public class ConfigManager {
                 writer.newLine();    // Add a newline character
             }
         } catch (IOException e) {
-            GlobalLogger.GLOBAL_LOGGER.log(Level.SEVERE, "An error occurred trying to read/write file:", e);
+            GlobalLogger.getLoggerInstance().log(Level.FATAL, "An error occurred trying to read/write file:", e);
         }
     }
 
@@ -94,7 +94,7 @@ public class ConfigManager {
                 }
             }
         } catch (IOException e) {
-            GlobalLogger.GLOBAL_LOGGER.log(Level.SEVERE, "An error occurred trying to read file:", e);
+            GlobalLogger.getLoggerInstance().log(Level.FATAL, "An error occurred trying to read file:", e);
         }
 
         return dirs;

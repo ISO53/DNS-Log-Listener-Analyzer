@@ -1,29 +1,19 @@
 package utils;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class GlobalLogger {
 
-    private static final Logger LOGGER = LogManager.getLogManager().getLogger(GlobalLogger.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(GlobalLogger.class);
 
-    public static final GlobalLogger GLOBAL_LOGGER = new GlobalLogger();
+    private static GlobalLogger GLOBAL_LOGGER = null;
 
     public boolean isDebugging;
 
     private GlobalLogger() {
         this.isDebugging = false;
-
-        try {
-            FileHandler fileHandler = new FileHandler(ConfigManager.CONFIG_MANAGER.getResourcesPath() + File.separator + "logs.log");
-            LOGGER.addHandler(fileHandler);
-        } catch (IOException e) {
-            LOGGER.log(Level.WARNING, e.toString());
-        }
     }
 
     /**
@@ -36,7 +26,7 @@ public class GlobalLogger {
     public void log(Level level, String msg) {
         LOGGER.log(level, msg);
         if (isDebugging) {
-            System.out.printf("[%s]\t%s\n", level.getName(), msg);
+            System.out.printf("[%s]\t%s\n", level, msg);
         }
     }
 
@@ -51,11 +41,18 @@ public class GlobalLogger {
     public void log(Level level, String msg, Exception e) {
         LOGGER.log(level, msg, e);
         if (isDebugging) {
-            System.out.printf("[%s]\t%s\t%s\n", level.getName(), msg, e);
+            System.out.printf("[%s]\t%s\t%s\n", level, msg, e);
         }
     }
 
     public void setDebugging(boolean debugging) {
         isDebugging = debugging;
+    }
+
+    public static GlobalLogger getLoggerInstance() {
+        if (GLOBAL_LOGGER == null) {
+            GLOBAL_LOGGER = new GlobalLogger();
+        }
+        return GLOBAL_LOGGER;
     }
 }

@@ -8,7 +8,7 @@ import java.io.*;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.util.ArrayList;
-import java.util.logging.Level;
+import org.apache.logging.log4j.Level;
 
 public class Watcher implements Runnable {
 
@@ -64,7 +64,7 @@ public class Watcher implements Runnable {
             readAndStore();
         }
 
-        GlobalLogger.GLOBAL_LOGGER.log(Level.INFO, "Watcher has been interrupted. Cleaning up and exiting this thread. " + this.path);
+        GlobalLogger.getLoggerInstance().log(Level.INFO, "Watcher has been interrupted. Cleaning up and exiting this thread. " + this.path);
         System.out.println("Watcher has been interrupted. Cleaning up and exiting this thread. " + this.path);
     }
 
@@ -102,7 +102,7 @@ public class Watcher implements Runnable {
         try {
             Thread.sleep(SLEEP_TIME_MILLIS);
         } catch (InterruptedException e) {
-            GlobalLogger.GLOBAL_LOGGER.log(Level.SEVERE, "An error occurred trying to sleep the thread:", e);
+            GlobalLogger.getLoggerInstance().log(Level.INFO, "An error occurred trying to sleep the thread:", e);
         }
     }
 
@@ -158,13 +158,13 @@ public class Watcher implements Runnable {
 
             lock.release();
         } catch (Exception e) {
-            GlobalLogger.GLOBAL_LOGGER.log(Level.SEVERE, "An error occurred trying to read file:", e);
+            GlobalLogger.getLoggerInstance().log(Level.ERROR, "An error occurred trying to read file:", e);
         } finally {
             if (lock != null) {
                 try {
                     lock.release();
                 } catch (IOException e) {
-                    GlobalLogger.GLOBAL_LOGGER.log(Level.SEVERE, "An error occurred trying to release file lock:", e);
+                    GlobalLogger.getLoggerInstance().log(Level.ERROR, "An error occurred trying to release file lock:", e);
                 }
             }
         }

@@ -9,7 +9,7 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.LinkedList;
 import java.util.Scanner;
-import java.util.logging.Level;
+import org.apache.logging.log4j.Level;
 
 public class App {
 
@@ -104,7 +104,7 @@ public class App {
         Path dir = Paths.get(directory);
 
         if (!Files.exists(dir) || !Files.isDirectory(dir) || dir.toString().equals("") || dir.toString().equals(".") || dir.toString().equals("..")) {
-            GlobalLogger.GLOBAL_LOGGER.log(Level.INFO, "Directory is not valid! " + directory);
+            GlobalLogger.getLoggerInstance().log(Level.INFO, "Directory is not valid! " + directory);
             System.out.println("Directory is not valid! " + directory);
             return;
         }
@@ -113,7 +113,7 @@ public class App {
         directoryWatcher.start();
         DIRECTORY_WATCHERS.add(directoryWatcher);
         ConfigManager.CONFIG_MANAGER.addDirIfNotExists(directory);
-        GlobalLogger.GLOBAL_LOGGER.log(Level.INFO, "Directory '%s' is now being listened. " + directory);
+        GlobalLogger.getLoggerInstance().log(Level.INFO, "Directory '%s' is now being listened. " + directory);
         System.out.println("Directory '%s' is now being listened. " + directory);
     }
 
@@ -138,7 +138,7 @@ public class App {
                 System.out.println(line);
             }
         } catch (IOException e) {
-            GlobalLogger.GLOBAL_LOGGER.log(Level.SEVERE, "An error occurred trying to read file:", e);
+            GlobalLogger.getLoggerInstance().log(Level.FATAL, "An error occurred trying to read file:", e);
         }
         System.out.println("");
     }

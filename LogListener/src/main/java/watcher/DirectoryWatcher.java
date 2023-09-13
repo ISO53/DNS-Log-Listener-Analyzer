@@ -4,7 +4,7 @@ import utils.GlobalLogger;
 
 import java.nio.file.*;
 import java.util.HashMap;
-import java.util.logging.Level;
+import org.apache.logging.log4j.Level;
 
 public class DirectoryWatcher implements Runnable {
 
@@ -42,7 +42,7 @@ public class DirectoryWatcher implements Runnable {
             // Assign that watch service to a directory
             dir.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY);
 
-            GlobalLogger.GLOBAL_LOGGER.log(Level.FINE, "Started watching log files on " + dir);
+            GlobalLogger.getLoggerInstance().log(Level.INFO, "Started watching log files on " + dir);
             System.out.println("Started watching log files on " + dir);
 
             while (isRunning) {
@@ -51,7 +51,7 @@ public class DirectoryWatcher implements Runnable {
                 try {
                     key = watchService.take(); // Blocking
                 } catch (InterruptedException e) {
-                    GlobalLogger.GLOBAL_LOGGER.log(Level.INFO, "DirectoryWatcher has been interrupted. Cleaning up and exiting this thread. " + dir);
+                    GlobalLogger.getLoggerInstance().log(Level.INFO, "DirectoryWatcher has been interrupted. Cleaning up and exiting this thread. " + dir);
                     System.out.println("DirectoryWatcher has been interrupted. Cleaning up and exiting this thread. " + dir);
                     watchService.close();
                     break;
@@ -90,7 +90,7 @@ public class DirectoryWatcher implements Runnable {
                 key.reset();
             }
         } catch (Exception e) {
-            GlobalLogger.GLOBAL_LOGGER.log(Level.SEVERE, "An error occurred trying to monitor a directory:", e);
+            GlobalLogger.getLoggerInstance().log(Level.INFO, "An error occurred trying to monitor a directory:", e);
         }
     }
 

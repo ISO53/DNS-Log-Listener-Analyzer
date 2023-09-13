@@ -10,7 +10,7 @@ import utils.NetworkInfo;
 import watcher.LogEntry;
 
 import java.nio.charset.StandardCharsets;
-import java.util.logging.Level;
+import org.apache.logging.log4j.Level;
 
 public class Consumer {
 
@@ -31,7 +31,7 @@ public class Consumer {
             channel = connection.createChannel();
             channel.queueDeclare(RabbitMQConfigConstants.QUEUE_NAME, true, false, false, null);
         } catch (Exception e) {
-            GlobalLogger.GLOBAL_LOGGER.log(Level.SEVERE, "An error occurred trying to open RabbitMQ channel:", e);
+            GlobalLogger.getLoggerInstance().log(Level.FATAL, "An error occurred trying to open RabbitMQ channel:", e);
         }
     }
 
@@ -60,7 +60,7 @@ public class Consumer {
             });
 
         } catch (Exception e) {
-            GlobalLogger.GLOBAL_LOGGER.log(Level.SEVERE, "An error occurred trying to read data from RabbitMQ:", e);
+            GlobalLogger.getLoggerInstance().log(Level.FATAL, "An error occurred trying to read data from RabbitMQ:", e);
         }
     }
 
@@ -80,7 +80,7 @@ public class Consumer {
                 elasticClient.close();
             }
         } catch (Exception e) {
-            GlobalLogger.GLOBAL_LOGGER.log(Level.SEVERE, "An error occurred trying to close RabbitMQ and ElasticSearch channels:", e);
+            GlobalLogger.getLoggerInstance().log(Level.FATAL, "An error occurred trying to close RabbitMQ and ElasticSearch channels:", e);
         }
     }
 

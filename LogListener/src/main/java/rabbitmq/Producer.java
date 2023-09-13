@@ -8,7 +8,7 @@ import utils.GlobalLogger;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeoutException;
-import java.util.logging.Level;
+import org.apache.logging.log4j.Level;
 
 public class Producer {
 
@@ -27,7 +27,7 @@ public class Producer {
             channel = connection.createChannel();
             channel.queueDeclare(RabbitMQConfigConstants.QUEUE_NAME, true, false, false, null);
         } catch (IOException | TimeoutException e) {
-            GlobalLogger.GLOBAL_LOGGER.log(Level.SEVERE, "An error occurred trying to open RabbitMQ channels:", e);
+            GlobalLogger.getLoggerInstance().log(Level.FATAL, "An error occurred trying to open RabbitMQ channels:", e);
         }
     }
 
@@ -39,7 +39,7 @@ public class Producer {
         try {
             channel.basicPublish("", RabbitMQConfigConstants.QUEUE_NAME, null, message.getBytes());
         } catch (IOException e) {
-            GlobalLogger.GLOBAL_LOGGER.log(Level.SEVERE, "An error occurred trying to send message to RabbitMQ queue:", e);
+            GlobalLogger.getLoggerInstance().log(Level.ERROR, "An error occurred trying to send message to RabbitMQ queue:", e);
         }
     }
 
