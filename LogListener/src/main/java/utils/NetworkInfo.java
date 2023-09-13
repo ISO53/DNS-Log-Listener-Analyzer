@@ -7,12 +7,8 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.logging.Level;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
 public class NetworkInfo {
-
-    private static final Logger LOGGER = LogManager.getLogManager().getLogger(NetworkInfo.class.getName());
 
     private String ip;
     private String hostname;
@@ -34,7 +30,7 @@ public class NetworkInfo {
         try {
             return InetAddress.getByName(this.ip).getHostName();
         } catch (UnknownHostException e) {
-            LOGGER.log(Level.SEVERE, "An error occurred trying to get hostname:", e);
+            GlobalLogger.GLOBAL_LOGGER.log(Level.SEVERE, "An error occurred trying to get hostname:", e);
         }
 
         return null;
@@ -44,7 +40,7 @@ public class NetworkInfo {
         try {
             return InetAddress.getByName(ip).getHostAddress();
         } catch (UnknownHostException e) {
-            LOGGER.log(Level.SEVERE, "An error occurred trying to get local ip:", e);
+            GlobalLogger.GLOBAL_LOGGER.log(Level.SEVERE, "An error occurred trying to get local ip:", e);
         }
 
         return null;
@@ -64,13 +60,13 @@ public class NetworkInfo {
                     macAddress.setLength(macAddress.length() - 1); // Remove the trailing colon
                     return macAddress.toString();
                 } else {
-                    LOGGER.log(Level.WARNING, "MAC Address: Not available (requires elevated privileges)");
+                    GlobalLogger.GLOBAL_LOGGER.log(Level.WARNING, "MAC Address: Not available (requires elevated privileges)");
                 }
             } catch (SocketException e) {
-                LOGGER.log(Level.WARNING, "SocketException - MAC Address: Not available (requires elevated privileges)", e);
+                GlobalLogger.GLOBAL_LOGGER.log(Level.WARNING, "SocketException - MAC Address: Not available (requires elevated privileges)", e);
             }
         } catch (Exception e) {
-            LOGGER.log(Level.WARNING, "Exception - MAC Address: Not available (requires elevated privileges)", e);
+            GlobalLogger.GLOBAL_LOGGER.log(Level.WARNING, "Exception - MAC Address: Not available (requires elevated privileges)", e);
         }
 
         return null;

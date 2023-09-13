@@ -1,16 +1,10 @@
 package watcher;
 
-import utils.ConfigManager;
 import utils.GlobalLogger;
 
-import java.io.File;
-import java.io.IOException;
 import java.nio.file.*;
 import java.util.HashMap;
-import java.util.logging.FileHandler;
 import java.util.logging.Level;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
 public class DirectoryWatcher implements Runnable {
 

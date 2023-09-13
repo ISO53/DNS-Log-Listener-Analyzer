@@ -4,8 +4,6 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.logging.Level;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
 public class ConfigManager {
 
