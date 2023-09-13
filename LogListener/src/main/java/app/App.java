@@ -1,11 +1,11 @@
 package app;
 
 import rabbitmq.Consumer;
+import utils.ConfigManager;
 import watcher.DirectoryWatcher;
 
 import java.io.*;
 import java.nio.file.*;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.logging.Level;
