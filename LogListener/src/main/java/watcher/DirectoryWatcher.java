@@ -43,7 +43,6 @@ public class DirectoryWatcher implements Runnable {
             dir.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY);
 
             GlobalLogger.getLoggerInstance().log(Level.INFO, "Started watching log files on " + dir);
-            System.out.println("Started watching log files on " + dir);
 
             while (isRunning) {
                 WatchKey key;
@@ -52,7 +51,6 @@ public class DirectoryWatcher implements Runnable {
                     key = watchService.take(); // Blocking
                 } catch (InterruptedException e) {
                     GlobalLogger.getLoggerInstance().log(Level.INFO, "DirectoryWatcher has been interrupted. Cleaning up and exiting this thread. " + dir);
-                    System.out.println("DirectoryWatcher has been interrupted. Cleaning up and exiting this thread. " + dir);
                     watchService.close();
                     break;
                 }

@@ -55,4 +55,8 @@ public class GlobalLogger {
         }
         return GLOBAL_LOGGER;
     }
+
+    public boolean isDebugging() {
+        return isDebugging;
+    }
 }

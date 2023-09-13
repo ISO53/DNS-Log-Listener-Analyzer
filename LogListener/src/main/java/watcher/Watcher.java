@@ -65,7 +65,6 @@ public class Watcher implements Runnable {
         }
 
         GlobalLogger.getLoggerInstance().log(Level.INFO, "Watcher has been interrupted. Cleaning up and exiting this thread. " + this.path);
-        System.out.println("Watcher has been interrupted. Cleaning up and exiting this thread. " + this.path);
     }
 
     /**

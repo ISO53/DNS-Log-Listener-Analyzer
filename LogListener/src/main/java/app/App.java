@@ -48,6 +48,7 @@ public class App {
             System.out.println("0. Listen new directory");
             System.out.println("1. Show listened directories");
             System.out.println("2. Show listened log files");
+            System.out.println("3. Toggle debugging");
             System.out.println("99. Shut Down The Program And Exit");
             System.out.print("-> ");
             choice = scanner.nextInt();
@@ -72,9 +73,30 @@ public class App {
                 Scanner scanner = new Scanner(System.in);
                 String dirStr = scanner.nextLine();
                 listenDirectory(dirStr);
+                scanner.close();
             }
             case 1 -> DIRECTORY_WATCHERS.forEach(directoryWatcher -> System.out.println(directoryWatcher.getDir().getFileName()));
             case 2 -> DIRECTORY_WATCHERS.forEach(directoryWatcher -> directoryWatcher.getWatchers().forEach((s, watcher) -> System.out.println(s)));
+            case 3 -> {
+                Scanner scanner = new Scanner(System.in);
+                String debuggingChoice;
+
+                if (GlobalLogger.getLoggerInstance().isDebugging()) {
+                    System.out.println("This action will disable debugging. Log messages will no longer printed to console. Do you wish to continue? (Y/N)");
+                    debuggingChoice = scanner.nextLine();
+                    if (debuggingChoice.equalsIgnoreCase("Y")) {
+                        GlobalLogger.getLoggerInstance().setDebugging(false);
+                    }
+                } else {
+                    System.out.println("This action will enable debugging. Log messages will be printed to console. Do you wish to continue? (Y/N)");
+                    debuggingChoice = scanner.nextLine();
+                    if (debuggingChoice.equalsIgnoreCase("Y")) {
+                        GlobalLogger.getLoggerInstance().setDebugging(true);
+                    }
+                }
+
+                scanner.close();
+            }
             case 99 -> {
                 return EXIT;
             }
@@ -105,7 +127,6 @@ public class App {
 
         if (!Files.exists(dir) || !Files.isDirectory(dir) || dir.toString().equals("") || dir.toString().equals(".") || dir.toString().equals("..")) {
             GlobalLogger.getLoggerInstance().log(Level.INFO, "Directory is not valid! " + directory);
-            System.out.println("Directory is not valid! " + directory);
             return;
         }
 
@@ -114,7 +135,6 @@ public class App {
         DIRECTORY_WATCHERS.add(directoryWatcher);
         ConfigManager.CONFIG_MANAGER.addDirIfNotExists(directory);
         GlobalLogger.getLoggerInstance().log(Level.INFO, "Directory '%s' is now being listened. " + directory);
-        System.out.println("Directory '%s' is now being listened. " + directory);
     }
 
     /**
