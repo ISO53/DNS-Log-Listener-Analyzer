@@ -1,1 +1,16 @@
+# # # # # # # # # # # # # # # # # # # # # #
+# This is the LogListener config file. To #
+# make a comment line, use '#'. The lines #
+# that starts with '#' will be ignored by #
+# the program. Do not change the parts    #
+# that stays between <start> and <end>.   #
+# # # # # # # # # # # # # # # # # # # # # #
+
+# Log files to listen to
+<start_log_files>
 C:\Users\termi\Desktop\Log Files
+<end_log_files>
+
+# Each log listener thread's last known status
+<start_thread_status>
+<end_thread_status>

@@ -5,6 +5,7 @@ import watcher.DirectoryWatcher;
 
 import java.io.*;
 import java.nio.file.*;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -86,23 +87,6 @@ public class App {
     }
 
     /**
-     * Reads the directory paths from the config.txt file and starts listening those directories
-     */
-    public static void startListeningLogFiles() {
-        String dir = getResourcesPath() + File.separator + "config.txt";
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(dir))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                listenDirectory(line);
-            }
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "An error occurred trying to read file:", e);
-        }
-    }
-
-
-    /**
      * Creates a thread pool full of workers (Consumer). These workers listen the rabbitmq queue and when there is a
      * data in the queue they take the data, enrich it sent it to the elastic search.
      */
@@ -130,45 +114,24 @@ public class App {
         DirectoryWatcher directoryWatcher = new DirectoryWatcher(dir);
         directoryWatcher.start();
         DIRECTORY_WATCHERS.add(directoryWatcher);
-        addDirIfNotExists(directory);
+        ConfigManager.CONFIG_MANAGER.addDirIfNotExists(directory);
         System.out.printf("Directory '%s' is now being listened.\n", directory);
     }
 
     /**
-     * Adds the new directory to the configuration file if it does not exist
-     *
-     * @param directory directory to add
+     * Gets the directories from ConfigManager and starts listening those directories
      */
-    public static void addDirIfNotExists(String directory) {
-        boolean isExist = false;
-        String filePath = getResourcesPath() + File.separator + "config.txt";
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.equals(directory)) {
-                    isExist = true;
-                    break;
-                }
-            }
-
-            if (isExist) {
-                return;
-            }
-
-            BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
-            writer.write(directory);
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "An error occurred trying to read/write file:", e);
+    public static void startListeningLogFiles() {
+        for (String directory : ConfigManager.CONFIG_MANAGER.getListenableDirectories()) {
+            listenDirectory(directory);
         }
-
     }
 
     /**
      * Writes some ascii art to look cool
      */
     public static void writeAsciiArt() {
-        String filePath = getResourcesPath() + File.separator + "ascii_art.txt";
+        String filePath = ConfigManager.CONFIG_MANAGER.getResourcesPath() + File.separator + "ascii_art.txt";
 
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
@@ -182,25 +145,20 @@ public class App {
     }
 
     /**
-     * Returns the path of the config file for the program
-     *
-     * @return path of the config.txt file
-     */
-    public static String getResourcesPath() {
-        String s = File.separator;
-        return System.getProperty("user.dir") + String.format("%ssrc%smain%sresources%s", s, s, s, s);
-    }
-
-    /**
      * Gracefully exits the application, stopping all directory watchers and consumers, and releasing associated
      * resources.
      */
     public static void exit() {
         for (DirectoryWatcher directoryWatcher : DIRECTORY_WATCHERS) {
+
+            // Stop each watcher
             directoryWatcher.getWatchers().forEach((s, watcher) -> watcher.stop());
+
+            // Then stop each directory watcher
             directoryWatcher.stop();
         }
 
+        // Stop each consumer (They listen RabbitMQ queue.)
         CONSUMERS.forEach(Consumer::close);
     }
 }
