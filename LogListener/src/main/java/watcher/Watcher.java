@@ -168,8 +168,4 @@ public class Watcher implements Runnable {
             }
         }
     }
-
-    public Thread getThread() {
-        return thread;
-    }
 }
