@@ -1,14 +1,18 @@
 package watcher;
 
+import utils.ConfigManager;
+import utils.GlobalLogger;
+
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.*;
 import java.util.HashMap;
+import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 public class DirectoryWatcher implements Runnable {
-
-    private static final Logger LOGGER = LogManager.getLogManager().getLogger(DirectoryWatcher.class.getName());
 
     // String:fileName, Watcher:watcher (each watcher watches one log file)
     private final HashMap<String, Watcher> watchers = new HashMap<>();
@@ -44,6 +48,7 @@ public class DirectoryWatcher implements Runnable {
             // Assign that watch service to a directory
             dir.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY);
 
+            GlobalLogger.GLOBAL_LOGGER.log(Level.FINE, "Started watching log files on " + dir);
             System.out.println("Started watching log files on " + dir);
 
             while (isRunning) {
@@ -52,7 +57,8 @@ public class DirectoryWatcher implements Runnable {
                 try {
                     key = watchService.take(); // Blocking
                 } catch (InterruptedException e) {
-                    System.out.println("DirectoryWatcher has been interrupted. Cleaning up and exiting this thread. " + this.thread.toString());
+                    GlobalLogger.GLOBAL_LOGGER.log(Level.INFO, "DirectoryWatcher has been interrupted. Cleaning up and exiting this thread. " + dir);
+                    System.out.println("DirectoryWatcher has been interrupted. Cleaning up and exiting this thread. " + dir);
                     watchService.close();
                     break;
                 }
@@ -74,7 +80,6 @@ public class DirectoryWatcher implements Runnable {
 
                     String absolutePath = ((Path) key.watchable()).resolve(changedFile).toAbsolutePath().toString();
 
-
                     if (watchers.containsKey(absolutePath)) {
                         // There is a watcher for this log file, wake him up
                         watchers.get(absolutePath).wakeUp();
@@ -91,7 +96,7 @@ public class DirectoryWatcher implements Runnable {
                 key.reset();
             }
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "An error occurred trying to monitor a directory:", e);
+            GlobalLogger.GLOBAL_LOGGER.log(Level.SEVERE, "An error occurred trying to monitor a directory:", e);
         }
     }
 

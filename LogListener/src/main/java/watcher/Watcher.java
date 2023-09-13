@@ -2,6 +2,7 @@ package watcher;
 
 import rabbitmq.Producer;
 import rabbitmq.RabbitMQConfigConstants;
+import utils.GlobalLogger;
 
 import java.io.*;
 import java.nio.channels.FileChannel;
@@ -12,8 +13,6 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 public class Watcher implements Runnable {
-
-    private static final Logger LOGGER = LogManager.getLogManager().getLogger(Watcher.class.getName());
 
     private final long SLEEP_TIME_MILLIS = 100;
     private final Thread thread;
@@ -28,6 +27,7 @@ public class Watcher implements Runnable {
     /**
      * Initializes a Watcher instance for monitoring changes in a specified log file. It sets the file path, creates a
      * thread for watching, and initializes other internal variables and a Producer for sending log data to RabbitMQ.
+     *
      * @param path A String representing the path to the log file to be monitored.
      */
     public Watcher(String path) {
@@ -62,11 +62,12 @@ public class Watcher implements Runnable {
             // File has changed, make the "isSleeping" true again in case of another wakeUp call
             isSleeping = true;
 
-            // Read the file chunk at a time and store it in the static QUEUE variable
+            // Read the file chunk at a time and store it in RabbitMQ Queue
             readAndStore();
         }
 
-        System.out.println("Watcher has been interrupted. Cleaning up and exiting this thread. " + this.thread.toString());
+        GlobalLogger.GLOBAL_LOGGER.log(Level.INFO, "Watcher has been interrupted. Cleaning up and exiting this thread. " + this.path);
+        System.out.println("Watcher has been interrupted. Cleaning up and exiting this thread. " + this.path);
     }
 
     /**
@@ -103,7 +104,7 @@ public class Watcher implements Runnable {
         try {
             Thread.sleep(SLEEP_TIME_MILLIS);
         } catch (InterruptedException e) {
-            LOGGER.log(Level.SEVERE, "An error occurred trying to sleep the thread:", e);
+            GlobalLogger.GLOBAL_LOGGER.log(Level.SEVERE, "An error occurred trying to sleep the thread:", e);
         }
     }
 
@@ -150,6 +151,8 @@ public class Watcher implements Runnable {
                 }
             }
 
+            reader.close();
+
             if (!logEntries.isEmpty()) {
                 producer.sendChunk(logEntries);
                 logEntries.clear();
@@ -157,13 +160,13 @@ public class Watcher implements Runnable {
 
             lock.release();
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "An error occurred trying to read file:", e);
+            GlobalLogger.GLOBAL_LOGGER.log(Level.SEVERE, "An error occurred trying to read file:", e);
         } finally {
             if (lock != null) {
                 try {
                     lock.release();
                 } catch (IOException e) {
-                    LOGGER.log(Level.SEVERE, "An error occurred trying to release file lock:", e);
+                    GlobalLogger.GLOBAL_LOGGER.log(Level.SEVERE, "An error occurred trying to release file lock:", e);
                 }
             }
         }

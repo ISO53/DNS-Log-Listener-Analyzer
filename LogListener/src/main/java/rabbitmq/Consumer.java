@@ -5,6 +5,7 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
 import elastic.ElasticClient;
+import utils.GlobalLogger;
 import utils.NetworkInfo;
 import watcher.LogEntry;
 
@@ -14,8 +15,6 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 public class Consumer {
-
-    private static final Logger LOGGER = LogManager.getLogManager().getLogger(Consumer.class.getName());
 
     private Channel channel;
     private final ElasticClient elasticClient;
@@ -34,7 +33,7 @@ public class Consumer {
             channel = connection.createChannel();
             channel.queueDeclare(RabbitMQConfigConstants.QUEUE_NAME, true, false, false, null);
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "An error occurred trying to open RabbitMQ channel:", e);
+            GlobalLogger.GLOBAL_LOGGER.log(Level.SEVERE, "An error occurred trying to open RabbitMQ channel:", e);
         }
     }
 
@@ -63,7 +62,7 @@ public class Consumer {
             });
 
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "An error occurred trying to read data from RabbitMQ:", e);
+            GlobalLogger.GLOBAL_LOGGER.log(Level.SEVERE, "An error occurred trying to read data from RabbitMQ:", e);
         }
     }
 
@@ -83,7 +82,7 @@ public class Consumer {
                 elasticClient.close();
             }
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "An error occurred trying to close RabbitMQ and ElasticSearch channels:", e);
+            GlobalLogger.GLOBAL_LOGGER.log(Level.SEVERE, "An error occurred trying to close RabbitMQ and ElasticSearch channels:", e);
         }
     }
 

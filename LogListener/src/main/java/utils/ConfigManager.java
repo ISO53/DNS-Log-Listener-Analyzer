@@ -9,8 +9,6 @@ import java.util.logging.Logger;
 
 public class ConfigManager {
 
-    private static final Logger LOGGER = LogManager.getLogManager().getLogger(ConfigManager.class.getName());
-
     public static final ConfigManager CONFIG_MANAGER = new ConfigManager();
 
     private void ConfigManager() {
@@ -40,7 +38,7 @@ public class ConfigManager {
                 return;
             }
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "An error occurred trying to read/write file:", e);
+            GlobalLogger.GLOBAL_LOGGER.log(Level.SEVERE, "An error occurred trying to read/write file:", e);
         }
 
         // Directory not exists. Let's add to the ArrayList then write the ArrayList to the file.
@@ -58,7 +56,7 @@ public class ConfigManager {
                 writer.newLine();    // Add a newline character
             }
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "An error occurred trying to read/write file:", e);
+            GlobalLogger.GLOBAL_LOGGER.log(Level.SEVERE, "An error occurred trying to read/write file:", e);
         }
     }
 
@@ -98,7 +96,7 @@ public class ConfigManager {
                 }
             }
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "An error occurred trying to read file:", e);
+            GlobalLogger.GLOBAL_LOGGER.log(Level.SEVERE, "An error occurred trying to read file:", e);
         }
 
         return dirs;

@@ -7,6 +7,7 @@ import co.elastic.clients.transport.ElasticsearchTransport;
 import co.elastic.clients.transport.rest_client.RestClientTransport;
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
+import utils.GlobalLogger;
 import watcher.LogEntry;
 
 import java.io.IOException;
@@ -15,8 +16,6 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 public class ElasticClient {
-
-    private static final Logger LOGGER = LogManager.getLogManager().getLogger(ElasticClient.class.getName());
 
     private final RestClient restClient;
     private final ElasticsearchTransport elasticsearchTransport;
@@ -55,7 +54,7 @@ public class ElasticClient {
                     .id(logEntry.getId().toString())
                     .document(logEntry));
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "An error occurred trying to index entry to ElasticSearch:", e);
+            GlobalLogger.GLOBAL_LOGGER.log(Level.SEVERE, "An error occurred trying to index entry to ElasticSearch:", e);
         }
 
         return null;
@@ -76,7 +75,7 @@ public class ElasticClient {
                 restClient.close();
             }
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "An error occurred trying to close ElasticSearch channels:", e);
+            GlobalLogger.GLOBAL_LOGGER.log(Level.SEVERE, "An error occurred trying to close ElasticSearch channels:", e);
         }
     }
 }

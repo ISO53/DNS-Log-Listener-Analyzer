@@ -2,6 +2,7 @@ package app;
 
 import rabbitmq.Consumer;
 import utils.ConfigManager;
+import utils.GlobalLogger;
 import watcher.DirectoryWatcher;
 
 import java.io.*;
@@ -9,12 +10,8 @@ import java.nio.file.*;
 import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.logging.Level;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
 public class App {
-
-    private static final Logger LOGGER = LogManager.getLogManager().getLogger(App.class.getName());
 
     private static final int EXIT = 0;
     private static final int CARRY_ON = 1;
@@ -107,7 +104,8 @@ public class App {
         Path dir = Paths.get(directory);
 
         if (!Files.exists(dir) || !Files.isDirectory(dir) || dir.toString().equals("") || dir.toString().equals(".") || dir.toString().equals("..")) {
-            System.out.println("Directory you entered is not valid!");
+            GlobalLogger.GLOBAL_LOGGER.log(Level.INFO, "Directory is not valid! " + directory);
+            System.out.println("Directory is not valid! " + directory);
             return;
         }
 
@@ -115,7 +113,8 @@ public class App {
         directoryWatcher.start();
         DIRECTORY_WATCHERS.add(directoryWatcher);
         ConfigManager.CONFIG_MANAGER.addDirIfNotExists(directory);
-        System.out.printf("Directory '%s' is now being listened.\n", directory);
+        GlobalLogger.GLOBAL_LOGGER.log(Level.INFO, "Directory '%s' is now being listened. " + directory);
+        System.out.println("Directory '%s' is now being listened. " + directory);
     }
 
     /**
@@ -139,7 +138,7 @@ public class App {
                 System.out.println(line);
             }
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "An error occurred trying to read file:", e);
+            GlobalLogger.GLOBAL_LOGGER.log(Level.SEVERE, "An error occurred trying to read file:", e);
         }
         System.out.println("");
     }

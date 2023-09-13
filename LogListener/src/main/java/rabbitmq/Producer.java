@@ -3,6 +3,7 @@ package rabbitmq;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
+import utils.GlobalLogger;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,8 +13,6 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 public class Producer {
-
-    private static final Logger LOGGER = LogManager.getLogManager().getLogger(Producer.class.getName());
 
     private Channel channel;
 
@@ -30,7 +29,7 @@ public class Producer {
             channel = connection.createChannel();
             channel.queueDeclare(RabbitMQConfigConstants.QUEUE_NAME, true, false, false, null);
         } catch (IOException | TimeoutException e) {
-            LOGGER.log(Level.SEVERE, "An error occurred trying to open RabbitMQ channels:", e);
+            GlobalLogger.GLOBAL_LOGGER.log(Level.SEVERE, "An error occurred trying to open RabbitMQ channels:", e);
         }
     }
 
@@ -42,7 +41,7 @@ public class Producer {
         try {
             channel.basicPublish("", RabbitMQConfigConstants.QUEUE_NAME, null, message.getBytes());
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "An error occurred trying to send message to RabbitMQ queue:", e);
+            GlobalLogger.GLOBAL_LOGGER.log(Level.SEVERE, "An error occurred trying to send message to RabbitMQ queue:", e);
         }
     }
 
