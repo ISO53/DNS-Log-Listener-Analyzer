@@ -11,13 +11,14 @@ import utils.GlobalLogger;
 import watcher.LogEntry;
 
 import java.io.IOException;
+
 import org.apache.logging.log4j.Level;
 
 public class ElasticClient {
 
-    private final RestClient restClient;
-    private final ElasticsearchTransport elasticsearchTransport;
-    private final ElasticsearchClient elasticsearchClient;
+    private RestClient restClient;
+    private ElasticsearchTransport elasticsearchTransport;
+    private ElasticsearchClient elasticsearchClient;
 
     /**
      * This constructor initializes an instance of the ElasticClient class, which serves as a wrapper for interacting
@@ -29,6 +30,7 @@ public class ElasticClient {
         restClient = RestClient
                 .builder(HttpHost.create(ElasticConstants.SERVER_URL))
                 .build();
+
 
         // Create the transport with jackson mapper
         elasticsearchTransport = new RestClientTransport(restClient, new JacksonJsonpMapper());

@@ -10,11 +10,13 @@ import utils.NetworkInfo;
 import watcher.LogEntry;
 
 import java.nio.charset.StandardCharsets;
+
 import org.apache.logging.log4j.Level;
 
 public class Consumer {
 
     private Channel channel;
+    private Connection connection;
     private final ElasticClient elasticClient;
 
     /**
@@ -27,7 +29,7 @@ public class Consumer {
         elasticClient = new ElasticClient();
 
         try {
-            Connection connection = factory.newConnection();
+            connection = factory.newConnection();
             channel = connection.createChannel();
             channel.queueDeclare(RabbitMQConfigConstants.QUEUE_NAME, true, false, false, null);
         } catch (Exception e) {
@@ -75,6 +77,11 @@ public class Consumer {
                 channel.close();
             }
 
+            // Close the RabbitMQ connection
+            if (connection != null && connection.isOpen()) {
+                connection.close();
+            }
+
             // Close the ElasticClient
             if (elasticClient != null) {
                 elasticClient.close();
@@ -83,5 +90,4 @@ public class Consumer {
             GlobalLogger.getLoggerInstance().log(Level.FATAL, "An error occurred trying to close RabbitMQ and ElasticSearch channels:", e);
         }
     }
-
 }

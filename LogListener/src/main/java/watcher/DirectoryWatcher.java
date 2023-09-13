@@ -117,4 +117,8 @@ public class DirectoryWatcher implements Runnable {
     public HashMap<String, Watcher> getWatchers() {
         return watchers;
     }
+
+    public Thread getThread() {
+        return thread;
+    }
 }

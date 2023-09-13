@@ -9,6 +9,7 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.LinkedList;
 import java.util.Scanner;
+
 import org.apache.logging.log4j.Level;
 
 public class App {
@@ -75,20 +76,22 @@ public class App {
                 listenDirectory(dirStr);
                 scanner.close();
             }
-            case 1 -> DIRECTORY_WATCHERS.forEach(directoryWatcher -> System.out.println(directoryWatcher.getDir().getFileName()));
-            case 2 -> DIRECTORY_WATCHERS.forEach(directoryWatcher -> directoryWatcher.getWatchers().forEach((s, watcher) -> System.out.println(s)));
+            case 1 ->
+                    DIRECTORY_WATCHERS.forEach(directoryWatcher -> System.out.println(directoryWatcher.getDir().getFileName()));
+            case 2 ->
+                    DIRECTORY_WATCHERS.forEach(directoryWatcher -> directoryWatcher.getWatchers().forEach((s, watcher) -> System.out.println(s)));
             case 3 -> {
                 Scanner scanner = new Scanner(System.in);
                 String debuggingChoice;
 
                 if (GlobalLogger.getLoggerInstance().isDebugging()) {
-                    System.out.println("This action will disable debugging. Log messages will no longer printed to console. Do you wish to continue? (Y/N)");
+                    System.out.println("This action will disable debugging. Log messages will no longer printed to console. Do you wish to continue? (Y/N)\n-> ");
                     debuggingChoice = scanner.nextLine();
                     if (debuggingChoice.equalsIgnoreCase("Y")) {
                         GlobalLogger.getLoggerInstance().setDebugging(false);
                     }
                 } else {
-                    System.out.println("This action will enable debugging. Log messages will be printed to console. Do you wish to continue? (Y/N)");
+                    System.out.println("This action will enable debugging. Log messages will be printed to console. Do you wish to continue? (Y/N)\n-> ");
                     debuggingChoice = scanner.nextLine();
                     if (debuggingChoice.equalsIgnoreCase("Y")) {
                         GlobalLogger.getLoggerInstance().setDebugging(true);
@@ -177,7 +180,7 @@ public class App {
             directoryWatcher.stop();
         }
 
-        // Stop each consumer (They listen RabbitMQ queue.)
+        // Stop each consumer (They listen RabbitMQ queue and write to ElasticSearch)
         CONSUMERS.forEach(Consumer::close);
     }
 }
