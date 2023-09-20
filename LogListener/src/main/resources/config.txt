@@ -11,6 +11,6 @@
 C:\Users\termi\Desktop\Log Files
 <end_log_files>
 
-# Each log listener thread's last known status
+# Each log listener thread's (Watcher) last known status
 <start_thread_status>
 <end_thread_status>

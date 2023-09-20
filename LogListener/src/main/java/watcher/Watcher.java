@@ -168,4 +168,8 @@ public class Watcher implements Runnable {
             }
         }
     }
+
+    private void updateStatusOnConfigFile() {
+
+    }
 }
