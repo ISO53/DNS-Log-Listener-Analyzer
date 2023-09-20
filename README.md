@@ -123,6 +123,10 @@ This comprehensive workflow ensures that log data is seamlessly processed, enric
 
 <br>
 
+<img src="https://github.com/ISO53/DNS-Log-Listener-Analyzer/blob/master/flow_chart.svg">
+
+<br>
+
 ## First Test Run
 1. Find the ```foo.log``` file in the root directory of the project and copy it's path.
 2. Paste the path in between ```<start_log_files>``` and ```<end_log_files>``` inside the ```config.txt``` folder.
