@@ -6,6 +6,7 @@ import utils.GlobalLogger;
 import utils.NetworkInfo;
 import watcher.LogEntry;
 
+import java.net.ConnectException;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.logging.log4j.Level;
@@ -24,7 +25,12 @@ public class Consumer {
         factory.setHost(RabbitMQConfigConstants.HOST_NAME);
 
         try {
-            connection = factory.newConnection();
+            try {
+                connection = factory.newConnection();
+            } catch(ConnectException e) {
+                GlobalLogger.getLoggerInstance().log(Level.FATAL, "Cannot connect to RabbitMQ. Probably database hasn't started yet.", e);
+                System.exit(1);
+            }
             channel = connection.createChannel();
             channel.queueDeclare(RabbitMQConfigConstants.QUEUE_NAME, true, false, false, null);
         } catch (Exception e) {
