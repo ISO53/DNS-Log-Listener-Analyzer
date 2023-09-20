@@ -2,12 +2,14 @@ package watcher;
 
 import rabbitmq.Producer;
 import rabbitmq.RabbitMQConfigConstants;
+import utils.ConfigManager;
 import utils.GlobalLogger;
 
 import java.io.*;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.util.ArrayList;
+
 import org.apache.logging.log4j.Level;
 
 public class Watcher implements Runnable {
@@ -17,7 +19,7 @@ public class Watcher implements Runnable {
     private final String path;
     private final Producer producer;
 
-    private long lastReadLine = -1;
+    private long lastReadLine;
     private boolean isRunning;
     private boolean isSleeping;
     private boolean isExit;
@@ -32,6 +34,24 @@ public class Watcher implements Runnable {
         this.path = path;
         this.thread = new Thread(this);
         this.isRunning = false;
+        this.lastReadLine = -1;
+        this.isSleeping = false;
+        this.isExit = false;
+        this.producer = new Producer();
+    }
+
+    /**
+     * Initializes a previously open Watcher instance for monitoring changes in a specified log file. It sets the file
+     * path, creates a thread for watching, and initializes other internal variables and a Producer for sending log data
+     * to RabbitMQ.
+     *
+     * @param path A String representing the path to the log file to be monitored.
+     */
+    public Watcher(String path, long status) {
+        this.path = path;
+        this.thread = new Thread(this);
+        this.isRunning = false;
+        this.lastReadLine = status;
         this.isSleeping = false;
         this.isExit = false;
         this.producer = new Producer();
@@ -62,6 +82,9 @@ public class Watcher implements Runnable {
 
             // Read the file chunk at a time and store it in RabbitMQ Queue
             readAndStore();
+
+            // Update the Watcher's status into the config file
+            updateStatusOnConfigFile();
         }
 
         GlobalLogger.getLoggerInstance().log(Level.INFO, "Watcher has been interrupted. Cleaning up and exiting this thread. " + this.path);
@@ -169,7 +192,14 @@ public class Watcher implements Runnable {
         }
     }
 
+    /**
+     * Updates the status of the Watcher on the config file.
+     */
     private void updateStatusOnConfigFile() {
+        ConfigManager.CONFIG_MANAGER.updateWatcherStatus(this.path, this.lastReadLine);
+    }
 
+    public String getPath() {
+        return path;
     }
 }

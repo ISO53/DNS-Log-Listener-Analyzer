@@ -6,11 +6,12 @@
 # that stays between <start> and <end>.   #
 # # # # # # # # # # # # # # # # # # # # # #
 
-# Log files to listen to
+# Log files to listen to. You can add or remove directories here manually or using the programs CLI.
 <start_log_files>
 C:\Users\termi\Desktop\Log Files
 <end_log_files>
 
-# Each log listener thread's (Watcher) last known status
+# Each log listener thread's (Watcher) last known status. DO NOT CHANGE THIS PART!
 <start_thread_status>
+C:\Users\termi\Desktop\Log Files\deneme.log 45
 <end_thread_status>

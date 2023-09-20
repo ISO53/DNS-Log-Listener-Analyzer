@@ -13,13 +13,13 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import org.apache.logging.log4j.Level;
+import watcher.Watcher;
 
 public class App {
 
     private static final int EXIT = 0;
     private static final int CARRY_ON = 1;
     private static final int THREAD_POOL_SIZE = 50;
-    private static final LinkedList<DirectoryWatcher> DIRECTORY_WATCHERS = new LinkedList<>();
     private static final LinkedList<Consumer> CONSUMERS = new LinkedList<>();
     private static final Terminator terminator = new Terminator();
 
@@ -35,6 +35,8 @@ public class App {
         writeAsciiArt();
 
         startListeningLogFiles();
+
+        startPreviouslyRunningWatchers();
 
         startListeningQueue();
 
@@ -97,9 +99,9 @@ public class App {
                 scanner.close();
             }
             case 1 ->
-                    DIRECTORY_WATCHERS.forEach(directoryWatcher -> System.out.println(directoryWatcher.getDir().getFileName()));
+                    DirectoryWatcher.DIRECTORY_WATCHERS.forEach(directoryWatcher -> System.out.println(directoryWatcher.getDir().getFileName()));
             case 2 ->
-                    DIRECTORY_WATCHERS.forEach(directoryWatcher -> directoryWatcher.getWatchers().forEach((s, watcher) -> System.out.println(s)));
+                    DirectoryWatcher.WATCHERS.values().forEach(watcher -> System.out.println(watcher.getPath()));
             case 3 -> {
                 Scanner scanner = new Scanner(System.in);
                 String debuggingChoice;
@@ -177,7 +179,7 @@ public class App {
 
         DirectoryWatcher directoryWatcher = new DirectoryWatcher(dir);
         directoryWatcher.start();
-        DIRECTORY_WATCHERS.add(directoryWatcher);
+        DirectoryWatcher.DIRECTORY_WATCHERS.add(directoryWatcher);
         ConfigManager.CONFIG_MANAGER.addDirIfNotExists(directory);
         GlobalLogger.getLoggerInstance().log(Level.INFO, "Directory '%s' is now being listened. " + directory);
     }
@@ -188,6 +190,18 @@ public class App {
     private static void startListeningLogFiles() {
         for (String directory : ConfigManager.CONFIG_MANAGER.getListenableDirectories()) {
             listenDirectory(directory);
+        }
+    }
+
+    /**
+     * If there are Watchers running when the program closes, the program saves the status of these Watchers in the
+     * config file. The next time the program runs, it first checks the config file and starts the Watchers from where
+     * they left off, if there are any.
+     */
+    private static void startPreviouslyRunningWatchers() {
+        for (String[] watchersStatus : ConfigManager.CONFIG_MANAGER.getWatchersStatus()) {
+            Watcher watcher = new Watcher(watchersStatus[0], Long.parseLong(watchersStatus[1]));
+            DirectoryWatcher.WATCHERS.put(watcher.getPath(), watcher);
         }
     }
 
@@ -205,7 +219,8 @@ public class App {
         } catch (IOException e) {
             GlobalLogger.getLoggerInstance().log(Level.FATAL, "An error occurred trying to read file:", e);
         }
-        System.out.println("");
+
+        System.out.println();
     }
 
     /**
@@ -217,17 +232,13 @@ public class App {
         // Wake the terminator up in case of timeout when program tries to close.
         terminator.wakeUp();
 
-        // Now close each resource one by one
-        for (DirectoryWatcher directoryWatcher : DIRECTORY_WATCHERS) {
+        // Stop each watcher
+        DirectoryWatcher.WATCHERS.values().forEach(Watcher::stop);
 
-            // Stop each watcher
-            directoryWatcher.getWatchers().forEach((s, watcher) -> watcher.stop());
+        // Then stop each directory watcher
+        DirectoryWatcher.DIRECTORY_WATCHERS.forEach(DirectoryWatcher::stop);
 
-            // Then stop each directory watcher
-            directoryWatcher.stop();
-        }
-
-        // Stop each consumer (They listen RabbitMQ queue and write to ElasticSearch)
+        // Then stop each consumer (They listen RabbitMQ queue and write to ElasticSearch)
         CONSUMERS.forEach(Consumer::close);
     }
 }

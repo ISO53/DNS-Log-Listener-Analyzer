@@ -14,8 +14,7 @@ public class ConfigManager {
 
     private final Lock lock = new ReentrantLock();
 
-
-    private void ConfigManager() {
+    private ConfigManager() {
     }
 
     /**
@@ -127,7 +126,7 @@ public class ConfigManager {
      *
      * @return LinkedList of String[] that each represent status of a Watcher.
      */
-    public LinkedList<String[]> getWatcherStatus() {
+    public LinkedList<String[]> getWatchersStatus() {
         LinkedList<String[]> watcherStatus = new LinkedList<>();
         String dir = getResourcesPath() + File.separator + "config.txt";
 
@@ -143,7 +142,14 @@ public class ConfigManager {
                     }
 
                     if (line.equals("<start_thread_status>")) {
-                        watcherStatus.add(reader.readLine().split(" "));
+                        line = reader.readLine();
+                        if (!line.equals("<end_thread_status>")) {
+
+                            String firstPart = line.substring(0, line.lastIndexOf(' '));
+                            String secondPart = line.substring(line.lastIndexOf(' ') + 1);
+
+                            watcherStatus.add(new String[]{firstPart, secondPart});
+                        }
                     }
 
                     if (line.equals("<end_thread_status>")) {
@@ -165,7 +171,7 @@ public class ConfigManager {
      *
      * @param path File path that belongs to a Watcher.
      */
-    public void updateWatcherStatus(String path, int status) {
+    public void updateWatcherStatus(String path, long status) {
         boolean isExist = false;
         String filePath = getResourcesPath() + File.separator + "config.txt";
         ArrayList<String> lines = new ArrayList<>();
@@ -176,13 +182,27 @@ public class ConfigManager {
         try {
             try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
                 String line;
-                while ((line = reader.readLine()) != null) {
+                boolean isPathsStarted = false;
 
-                    if (line.split(" ")[0].equals(path)) {
-                        isExist = true;
+                while ((line = reader.readLine()) != null) {
+                    lines.add(line);
+
+                    if (line.equals("<start_thread_status>")) {
+                        isPathsStarted = true;
+                        continue;
                     }
 
-                    lines.add(line);
+                    if (line.equals("<end_thread_status>")) {
+                        isPathsStarted = false;
+                        continue;
+                    }
+
+                    if (isPathsStarted) {
+                        String firstPart = line.substring(0, line.lastIndexOf(' '));
+                        if (firstPart.equals(path)) {
+                            isExist = true;
+                        }
+                    }
                 }
             } catch (IOException e) {
                 GlobalLogger.getLoggerInstance().log(Level.FATAL, "An error occurred trying to read/write file:", e);
@@ -192,22 +212,29 @@ public class ConfigManager {
             if (isExist) {
                 boolean isPathsStarted = false;
                 for (int i = 0; i < lines.size(); i++) {
-                    if (lines.get(i).equals("<start_log_files>")) {
+                    if (lines.get(i).equals("<start_thread_status>")) {
                         isPathsStarted = true;
+                        continue;
+                    }
+
+                    if (lines.get(i).equals("<end_thread_status>")) {
+                        isPathsStarted = false;
                         continue;
                     }
 
                     if (isPathsStarted) {
                         if (lines.get(i).startsWith(path)) {
-                            lines.set(i, lines.get(i).split(" ")[0] + " " + status);
+                            String firstPart = lines.get(i).substring(0, lines.get(i).lastIndexOf(' '));
+                            lines.set(i, firstPart + " " + status);
                             break;
                         }
                     }
                 }
             } else {
-                for (int i = 0; i < lines.size(); i++) {
-                    if (lines.get(i).equals("<start_log_files>")) {
-                        lines.add(i, path + " " + status);
+                int size = lines.size();
+                for (int i = 0; i < size; i++) {
+                    if (lines.get(i).equals("<start_thread_status>")) {
+                        lines.add(i + 1, path + " " + status);
                     }
                 }
             }

@@ -4,12 +4,16 @@ import utils.GlobalLogger;
 
 import java.nio.file.*;
 import java.util.HashMap;
+import java.util.LinkedList;
+
 import org.apache.logging.log4j.Level;
 
 public class DirectoryWatcher implements Runnable {
 
+    public static final LinkedList<DirectoryWatcher> DIRECTORY_WATCHERS = new LinkedList<>();
+
     // String:fileName, Watcher:watcher (each watcher watches one log file)
-    private final HashMap<String, Watcher> watchers = new HashMap<>();
+    public static final HashMap<String, Watcher> WATCHERS = new HashMap<>();
     private final Path dir;
     private final Thread thread;
 
@@ -72,15 +76,15 @@ public class DirectoryWatcher implements Runnable {
 
                     String absolutePath = ((Path) key.watchable()).resolve(changedFile).toAbsolutePath().toString();
 
-                    if (watchers.containsKey(absolutePath)) {
+                    if (WATCHERS.containsKey(absolutePath)) {
                         // There is a watcher for this log file, wake him up
-                        watchers.get(absolutePath).wakeUp();
+                        WATCHERS.get(absolutePath).wakeUp();
                         continue;
                     }
 
                     // There is no watcher for this file, create one
                     Watcher watcher = new Watcher(absolutePath);
-                    watchers.put(absolutePath, watcher);
+                    WATCHERS.put(absolutePath, watcher);
                     watcher.start();
                     watcher.wakeUp();
                 }
@@ -112,10 +116,6 @@ public class DirectoryWatcher implements Runnable {
 
     public Path getDir() {
         return dir;
-    }
-
-    public HashMap<String, Watcher> getWatchers() {
-        return watchers;
     }
 
     public Thread getThread() {
