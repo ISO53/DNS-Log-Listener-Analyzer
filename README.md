@@ -12,6 +12,7 @@ DNS Log Analyzer is a powerful tool designed to provide enhanced understanding a
 - [Usage](#usage)
 - [Features](#features)
 - [How It Works](#how-it-works)
+- [First Test Run](#first-test-run)
 - [License](#license)
 
 <br>
@@ -119,6 +120,19 @@ The DNS Log Analyzer project follows a straightforward workflow:
 - **Analysis:** Users can analyze the log data using Elasticsearch queries, gaining valuable insights into DNS server activity.
 
 This comprehensive workflow ensures that log data is seamlessly processed, enriched, and made available for in-depth analysis while maintaining data integrity and reliability through RabbitMQ integration.
+
+<br>
+
+## First Test Run
+1. Find the ```foo.log``` file in the root directory of the project and copy it's path.
+2. Paste the path in between ```<start_log_files>``` and ```<end_log_files>``` inside the ```config.txt``` folder.
+3. [Run](#usage) the program.
+4. Run the ```create_mock_dns_log_data.py``` to create mock DNS logs with the following command.
+
+   ```bash
+   python create_mock_dns_log_data.py
+5. This will continously generate DNS logs until the program is stopped. You can stop the program by pressing  ```CTRL``` + ```C```.
+6. Check the Elasticsearch indexes to see the data. First time? Use the [Multi Elasticsearch Head](https://chrome.google.com/webstore/detail/multi-elasticsearch-head/cpmmilfkofbeimbmgiclohpodggeheim) chrome extension to see the Elasticsearch data. No installation required!
 
 <br>
 
