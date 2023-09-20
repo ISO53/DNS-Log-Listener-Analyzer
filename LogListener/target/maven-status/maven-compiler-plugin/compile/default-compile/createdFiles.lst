@@ -1,8 +1,14 @@
 app\App.class
+utils\GlobalLogger.class
 rabbitmq\Producer.class
+elastic\ElasticConstants.class
 watcher\DirectoryWatcher.class
-watcher\Watcher.class
 utils\NetworkInfo.class
+elastic\ElasticClient.class
+rabbitmq\Consumer.class
+utils\Terminator$InvalidMaxTimeoutException.class
+watcher\Watcher.class
+utils\Terminator.class
 rabbitmq\RabbitMQConfigConstants.class
 watcher\LogEntry.class
-rabbitmq\Consumer.class
+utils\ConfigManager.class

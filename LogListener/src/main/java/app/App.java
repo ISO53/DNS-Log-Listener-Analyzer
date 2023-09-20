@@ -171,6 +171,7 @@ public class App {
      */
     private static void listenDirectory(String directory) {
         Path dir = Paths.get(directory);
+        System.out.println(dir.toAbsolutePath());
 
         if (!Files.exists(dir) || !Files.isDirectory(dir) || dir.toString().isEmpty() || dir.toString().equals(".") || dir.toString().equals("..")) {
             GlobalLogger.getLoggerInstance().log(Level.INFO, "Directory is not valid! " + directory);

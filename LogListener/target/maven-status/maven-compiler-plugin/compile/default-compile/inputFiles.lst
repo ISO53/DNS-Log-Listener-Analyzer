@@ -1,8 +1,13 @@
 C:\Users\termi\Documents\Projects\PersonalProjects\Log-Listener\LogListener\src\main\java\watcher\Watcher.java
-C:\Users\termi\Documents\Projects\PersonalProjects\Log-Listener\LogListener\src\main\java\rabbitmq\Producer.java
+C:\Users\termi\Documents\Projects\PersonalProjects\Log-Listener\LogListener\src\main\java\utils\ConfigManager.java
 C:\Users\termi\Documents\Projects\PersonalProjects\Log-Listener\LogListener\src\main\java\rabbitmq\Consumer.java
-C:\Users\termi\Documents\Projects\PersonalProjects\Log-Listener\LogListener\src\main\java\rabbitmq\RabbitMQConfigConstants.java
+C:\Users\termi\Documents\Projects\PersonalProjects\Log-Listener\LogListener\src\main\java\elastic\ElasticClient.java
+C:\Users\termi\Documents\Projects\PersonalProjects\Log-Listener\LogListener\src\main\java\utils\Terminator.java
 C:\Users\termi\Documents\Projects\PersonalProjects\Log-Listener\LogListener\src\main\java\watcher\LogEntry.java
 C:\Users\termi\Documents\Projects\PersonalProjects\Log-Listener\LogListener\src\main\java\app\App.java
-C:\Users\termi\Documents\Projects\PersonalProjects\Log-Listener\LogListener\src\main\java\utils\NetworkInfo.java
 C:\Users\termi\Documents\Projects\PersonalProjects\Log-Listener\LogListener\src\main\java\watcher\DirectoryWatcher.java
+C:\Users\termi\Documents\Projects\PersonalProjects\Log-Listener\LogListener\src\main\java\rabbitmq\Producer.java
+C:\Users\termi\Documents\Projects\PersonalProjects\Log-Listener\LogListener\src\main\java\elastic\ElasticConstants.java
+C:\Users\termi\Documents\Projects\PersonalProjects\Log-Listener\LogListener\src\main\java\rabbitmq\RabbitMQConfigConstants.java
+C:\Users\termi\Documents\Projects\PersonalProjects\Log-Listener\LogListener\src\main\java\utils\GlobalLogger.java
+C:\Users\termi\Documents\Projects\PersonalProjects\Log-Listener\LogListener\src\main\java\utils\NetworkInfo.java
