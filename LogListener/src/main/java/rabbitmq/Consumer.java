@@ -1,9 +1,6 @@
 package rabbitmq;
 
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.DeliverCallback;
+import com.rabbitmq.client.*;
 import elastic.ElasticClient;
 import utils.GlobalLogger;
 import utils.NetworkInfo;
@@ -17,7 +14,6 @@ public class Consumer {
 
     private Channel channel;
     private Connection connection;
-    private final ElasticClient elasticClient;
 
     /**
      * Initializes a Consumer instance for receiving messages from a RabbitMQ queue and forwarding them to Elasticsearch
@@ -26,7 +22,6 @@ public class Consumer {
     public Consumer() {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost(RabbitMQConfigConstants.HOST_NAME);
-        elasticClient = new ElasticClient();
 
         try {
             connection = factory.newConnection();
@@ -55,11 +50,22 @@ public class Consumer {
                 logEntry.setHostAddress(networkInfo.getHostname());
                 logEntry.setMacAddress(networkInfo.getMacAddress());
 
-                elasticClient.send(logEntry);
+                ElasticClient.elasticClient.send(logEntry);
+
+                // Acknowledge the message after processing
+                try {
+                    channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+                } catch (AlreadyClosedException e) {
+                    GlobalLogger.getLoggerInstance().log(Level.WARN, "An error occurred trying to close a RabbitMQ channel that has  already been closed :", e);
+                }
             };
 
-            channel.basicConsume(RabbitMQConfigConstants.QUEUE_NAME, true, deliverCallback, consumerTag -> {
-            });
+            channel.basicConsume(
+                    RabbitMQConfigConstants.QUEUE_NAME,
+                    RabbitMQConfigConstants.AUTO_ACKNOWLEDGE_MESSAGES,
+                    deliverCallback,
+                    consumerTag -> {
+                    });
 
         } catch (Exception e) {
             GlobalLogger.getLoggerInstance().log(Level.FATAL, "An error occurred trying to read data from RabbitMQ:", e);
@@ -83,9 +89,8 @@ public class Consumer {
             }
 
             // Close the ElasticClient
-            if (elasticClient != null) {
-                elasticClient.close();
-            }
+            ElasticClient.elasticClient.close();
+
         } catch (Exception e) {
             GlobalLogger.getLoggerInstance().log(Level.FATAL, "An error occurred trying to close RabbitMQ and ElasticSearch channels:", e);
         }

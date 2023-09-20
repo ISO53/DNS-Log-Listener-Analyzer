@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 public class LogEntry {
 
-    private final UUID id;
+    private final UUID id;                        // UUID
     private final String date;                    // 11/17/2021
     private final String time;                    // 6:00:00 AM
     private final String threadId;                // 0D0C
@@ -42,9 +42,9 @@ public class LogEntry {
         this.remoteIp = informations[8];
         this.xidHex = informations[9];
         this.queryResponse = informations[10];
-        this.opcode = informations[11];
+        this.opcode = informations[11].substring(1);
         this.flagsHex = informations[12];
-        this.flagsChar = informations[13];
+        this.flagsChar = informations[13].substring(0, informations[13].length() - 1);
         this.responseCode = informations[14];
         this.questionType = informations[15];
         this.questionName = parseDNS(informations[15]);

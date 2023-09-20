@@ -13,7 +13,7 @@ public class GlobalLogger {
     public boolean isDebugging;
 
     private GlobalLogger() {
-        this.isDebugging = true;
+        this.isDebugging = false;
     }
 
     /**

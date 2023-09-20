@@ -3,11 +3,13 @@ package app;
 import rabbitmq.Consumer;
 import utils.ConfigManager;
 import utils.GlobalLogger;
+import utils.Terminator;
 import watcher.DirectoryWatcher;
 
 import java.io.*;
 import java.nio.file.*;
 import java.util.LinkedList;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import org.apache.logging.log4j.Level;
@@ -16,9 +18,10 @@ public class App {
 
     private static final int EXIT = 0;
     private static final int CARRY_ON = 1;
-    private static final int THREAD_POOL_SIZE = 5;
+    private static final int THREAD_POOL_SIZE = 50;
     private static final LinkedList<DirectoryWatcher> DIRECTORY_WATCHERS = new LinkedList<>();
     private static final LinkedList<Consumer> CONSUMERS = new LinkedList<>();
+    private static final Terminator terminator = new Terminator();
 
     /**
      * Main method
@@ -26,6 +29,8 @@ public class App {
      * @param args command line arguments
      */
     public static void main(String[] args) {
+
+        init();
 
         writeAsciiArt();
 
@@ -38,11 +43,18 @@ public class App {
     }
 
     /**
+     * Initializes objects that can be used in the main function.
+     */
+    private static void init() {
+        terminator.start();
+    }
+
+    /**
      * Main menu that gives the user control over the program
      */
-    public static void mainMenu() {
+    private static void mainMenu() {
         Scanner scanner = new Scanner(System.in);
-        int choice;
+        int choice = 0;
         int status;
 
         do {
@@ -50,9 +62,17 @@ public class App {
             System.out.println("1. Show listened directories");
             System.out.println("2. Show listened log files");
             System.out.println("3. Toggle debugging");
+            System.out.println("4. Set the maximum wait time to be used when the program closes");
             System.out.println("99. Shut Down The Program And Exit");
             System.out.print("-> ");
-            choice = scanner.nextInt();
+            try {
+                choice = Integer.parseInt(scanner.nextLine());
+            } catch (NoSuchElementException e) {
+                choice = 100;
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a valid number next time.");
+                choice = 100;
+            }
             status = choiceHandler(choice);
         } while (status != EXIT);
 
@@ -67,7 +87,7 @@ public class App {
      * @param choice a number entered by the user to choose between menu options
      * @return status
      */
-    public static int choiceHandler(int choice) {
+    private static int choiceHandler(int choice) {
 
         switch (choice) {
             case 0 -> {
@@ -100,9 +120,31 @@ public class App {
 
                 scanner.close();
             }
+            case 4 -> {
+                Scanner scanner = new Scanner(System.in);
+                int maxTimeout = 0;
+
+                System.out.print("Select the amount of time that must be waited before the program is forcibly closed. Must be greater than 5 seconds!\n-> ");
+                try {
+                    maxTimeout = Integer.parseInt(scanner.nextLine());
+                    scanner.close();
+                } catch (NoSuchElementException | NumberFormatException e) {
+                    System.out.println("Please enter a valid number next time.");
+                    scanner.close();
+                    break;
+                } catch (Terminator.InvalidMaxTimeoutException e) {
+                    System.out.println("You must enter a number greater than 5!");
+                    scanner.close();
+                    break;
+                }
+
+                terminator.setMaxTimeoutSeconds(maxTimeout);
+                System.out.println("The time to wait before closing the program is set to " + maxTimeout + " seconds.");
+            }
             case 99 -> {
                 return EXIT;
             }
+            default -> System.out.println("You have entered an incorrect input! Try again.");
         }
 
         return CARRY_ON;
@@ -112,7 +154,7 @@ public class App {
      * Creates a thread pool full of workers (Consumer). These workers listen the rabbitmq queue and when there is a
      * data in the queue they take the data, enrich it sent it to the elastic search.
      */
-    public static void startListeningQueue() {
+    private static void startListeningQueue() {
         for (int i = 0; i < THREAD_POOL_SIZE; i++) {
             Consumer consumer = new Consumer();
             CONSUMERS.add(consumer);
@@ -125,7 +167,7 @@ public class App {
      *
      * @param directory a file directory to listen
      */
-    public static void listenDirectory(String directory) {
+    private static void listenDirectory(String directory) {
         Path dir = Paths.get(directory);
 
         if (!Files.exists(dir) || !Files.isDirectory(dir) || dir.toString().equals("") || dir.toString().equals(".") || dir.toString().equals("..")) {
@@ -143,7 +185,7 @@ public class App {
     /**
      * Gets the directories from ConfigManager and starts listening those directories
      */
-    public static void startListeningLogFiles() {
+    private static void startListeningLogFiles() {
         for (String directory : ConfigManager.CONFIG_MANAGER.getListenableDirectories()) {
             listenDirectory(directory);
         }
@@ -152,7 +194,7 @@ public class App {
     /**
      * Writes some ascii art to look cool
      */
-    public static void writeAsciiArt() {
+    private static void writeAsciiArt() {
         String filePath = ConfigManager.CONFIG_MANAGER.getResourcesPath() + File.separator + "ascii_art.txt";
 
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
@@ -170,7 +212,12 @@ public class App {
      * Gracefully exits the application, stopping all directory watchers and consumers, and releasing associated
      * resources.
      */
-    public static void exit() {
+    private static void exit() {
+
+        // Wake the terminator up in case of timeout when program tries to close.
+        terminator.wakeUp();
+
+        // Now close each resource one by one
         for (DirectoryWatcher directoryWatcher : DIRECTORY_WATCHERS) {
 
             // Stop each watcher

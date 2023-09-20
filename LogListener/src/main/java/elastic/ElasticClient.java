@@ -19,18 +19,18 @@ public class ElasticClient {
     private RestClient restClient;
     private ElasticsearchTransport elasticsearchTransport;
     private ElasticsearchClient elasticsearchClient;
+    public static final ElasticClient elasticClient = new ElasticClient();
 
     /**
      * This constructor initializes an instance of the ElasticClient class, which serves as a wrapper for interacting
      * with Elasticsearch. It sets up the necessary Elasticsearch client components to establish a connection to the
      * Elasticsearch cluster specified in the ElasticConstants.SERVER_URL.
      */
-    public ElasticClient() {
+    private ElasticClient() {
         // Create the low-level client
         restClient = RestClient
                 .builder(HttpHost.create(ElasticConstants.SERVER_URL))
                 .build();
-
 
         // Create the transport with jackson mapper
         elasticsearchTransport = new RestClientTransport(restClient, new JacksonJsonpMapper());
@@ -54,7 +54,10 @@ public class ElasticClient {
                     .id(logEntry.getId().toString())
                     .document(logEntry));
         } catch (IOException e) {
-            GlobalLogger.getLoggerInstance().log(Level.FATAL, "An error occurred trying to index entry to ElasticSearch:", e);
+            GlobalLogger.getLoggerInstance().log(Level.WARN, "IOException occurred trying to index entry to ElasticSearch:", e);
+        } catch (RuntimeException e) {
+            GlobalLogger.getLoggerInstance().log(Level.WARN, "RuntimeException occurred trying to index entry to ElasticSearch. Probably caused because of the exit request of the program by the user:", e);
+            close();
         }
 
         return null;
