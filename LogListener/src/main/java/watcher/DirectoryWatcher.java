@@ -117,8 +117,4 @@ public class DirectoryWatcher implements Runnable {
     public Path getDir() {
         return dir;
     }
-
-    public Thread getThread() {
-        return thread;
-    }
 }

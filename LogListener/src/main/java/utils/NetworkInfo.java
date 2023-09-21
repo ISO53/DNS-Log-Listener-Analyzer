@@ -6,6 +6,7 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+
 import org.apache.logging.log4j.Level;
 
 public class NetworkInfo {
@@ -26,6 +27,14 @@ public class NetworkInfo {
         super();
     }
 
+    /**
+     * This method attempts to perform a hostname lookup for the provided IP address. If successful, it returns the
+     * hostname as a String. If the lookup fails or the IP address is not resolvable, it logs a warning message and
+     * returns null.
+     *
+     * @return The retrieved hostname as a String if the lookup is successful, or null if the lookup fails or an error
+     * occurs.
+     */
     private @Nullable String findHostname() {
         try {
             return InetAddress.getByName(this.ip).getHostName();
@@ -36,6 +45,14 @@ public class NetworkInfo {
         return null;
     }
 
+    /**
+     * This method attempts to obtain the local IP address of the host machine. If successful, it returns the local IP
+     * address as a String. If an error occurs or the local IP address cannot be determined, it logs a warning message
+     * and returns null.
+     *
+     * @return The local IP address as a String if retrieval is successful, or null if an error occurs or the local IP
+     * address cannot be determined.
+     */
     private @Nullable String findLocalIp() {
         try {
             return InetAddress.getByName(ip).getHostAddress();
@@ -46,6 +63,15 @@ public class NetworkInfo {
         return null;
     }
 
+    /**
+     * This method attempts to obtain the MAC address of the network interface corresponding to the provided IP address.
+     * If successful, it returns the MAC address as a formatted String. If the MAC address is not available due to
+     * elevated privileges being required or if an error occurs during the retrieval process, it logs a warning message
+     * and returns null.
+     *
+     * @return The MAC address as a formatted String if retrieval is successful, or null if the MAC address is not available
+     * (requires elevated privileges) or an error occurs during retrieval.
+     */
     private @Nullable String findMacAddress() {
         try {
             // MAC address (requires elevated privileges)
@@ -70,10 +96,6 @@ public class NetworkInfo {
         }
 
         return null;
-    }
-
-    public String getIp() {
-        return this.ip;
     }
 
     public String getHostname() {

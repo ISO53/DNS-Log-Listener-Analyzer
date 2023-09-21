@@ -16,9 +16,9 @@ import org.apache.logging.log4j.Level;
 
 public class ElasticClient {
 
-    private RestClient restClient;
-    private ElasticsearchTransport elasticsearchTransport;
-    private ElasticsearchClient elasticsearchClient;
+    private final RestClient restClient;
+    private final ElasticsearchTransport elasticsearchTransport;
+    private final ElasticsearchClient elasticsearchClient;
     public static final ElasticClient elasticClient = new ElasticClient();
 
     /**

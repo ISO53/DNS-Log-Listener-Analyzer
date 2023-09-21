@@ -53,8 +53,16 @@ public class LogEntry {
         this.macAddress = null;
     }
 
+    /**
+     * This method takes a DNS string in the format "(d1)d2(d3)d4...", where "(d1)", "(d2)", "(d3)", etc., represent
+     * numeric values enclosed in parentheses, followed by non-parenthesized domain components. It extracts and concatenates
+     * the non-parenthesized domain components, separated by dots ('.'), and returns the result as a single string.
+     *
+     * @param dns The DNS string to be parsed.
+     * @return A concatenated string of non-parenthesized domain components, separated by dots ('.').
+     */
     public String parseDNS(String dns) {
-        Pattern pattern = Pattern.compile("\\((\\d+)\\)([^\\(\\)]+)");
+        Pattern pattern = Pattern.compile("\\((\\d+)\\)([^()]+)");
         Matcher matcher = pattern.matcher(dns);
         StringBuilder result = new StringBuilder();
 
@@ -85,79 +93,7 @@ public class LogEntry {
         return id;
     }
 
-    public String getDate() {
-        return date;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public String getThreadId() {
-        return threadId;
-    }
-
-    public String getContext() {
-        return context;
-    }
-
-    public String getInternalPacketId() {
-        return internalPacketId;
-    }
-
-    public String getUdpTcpIndicator() {
-        return udpTcpIndicator;
-    }
-
-    public String getSendReceiveIndicator() {
-        return sendReceiveIndicator;
-    }
-
     public String getRemoteIp() {
         return remoteIp;
-    }
-
-    public String getXidHex() {
-        return xidHex;
-    }
-
-    public String getQueryResponse() {
-        return queryResponse;
-    }
-
-    public String getOpcode() {
-        return opcode;
-    }
-
-    public String getFlagsHex() {
-        return flagsHex;
-    }
-
-    public String getFlagsChar() {
-        return flagsChar;
-    }
-
-    public String getResponseCode() {
-        return responseCode;
-    }
-
-    public String getQuestionType() {
-        return questionType;
-    }
-
-    public String getQuestionName() {
-        return questionName;
-    }
-
-    public String getLocalIp() {
-        return localIp;
-    }
-
-    public String getHostAddress() {
-        return hostAddress;
-    }
-
-    public String getMacAddress() {
-        return macAddress;
     }
 }
