@@ -123,7 +123,18 @@ This comprehensive workflow ensures that log data is seamlessly processed, enric
 
 <br>
 
-<img src="https://github.com/ISO53/DNS-Log-Listener-Analyzer/blob/master/flow_chart.svg">
+
+<picture>
+  <source
+    srcset="https://github.com/ISO53/DNS-Log-Listener-Analyzer/blob/master/flow_chart_dark.svg"
+    media="(prefers-color-scheme: dark)"
+  />
+  <source
+    srcset="https://github.com/ISO53/DNS-Log-Listener-Analyzer/blob/master/flow_chart_light.svg"
+    media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)"
+  />
+  <img src="https://github.com/ISO53/DNS-Log-Listener-Analyzer/blob/master/flow_chart_light.svg" />
+</picture>
 
 <br>
 
