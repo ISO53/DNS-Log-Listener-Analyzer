@@ -1,10 +1,12 @@
-# # # # # # # # # # # # # # # # # # # # # #
-# This is the LogListener config file. To #
-# make a comment line, use '#'. The lines #
-# that starts with '#' will be ignored by #
-# the program. Do not change the parts    #
-# that stays between <start> and <end>.   #
-# # # # # # # # # # # # # # # # # # # # # #
+# # # # # # # # # # # # # # # # # # # # # # # # #
+#                                               #
+#    This is the LogListener config file. To    #
+#    make a comment line, use '#'. The lines    #
+#    that starts with '#' will be ignored by    #
+#    the program. Do not change the parts       #
+#    that stays between <start> and <end>.      #
+#                                               #
+# # # # # # # # # # # # # # # # # # # # # # # # #
 
 # Log files to listen to. You can add or remove directories here manually or using the programs CLI.
 <start_log_files>
